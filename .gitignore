@@ -1,0 +1,12 @@
+# Wrangler
+.wrangler/
+.dev.vars
+node_modules/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VADO Evaluator · Behavioral Intelligence Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A1628;
+  --navy-2:#0F1F3A;
+  --navy-3:#142847;
+  --teal:#00B8C4;
+  --teal-dim:#007A8A;
+  --gold:#E4B04A;
+  --gold-soft:#C8922A;
+  --ivory:#F4EFE6;
+  --pink:#FF6B9D;
+  --coral:#FF8566;
+  --mint:#5EE3B8;
+  --red:#FF5555;
+  --amber:#FFB444;
+  --green:#5EE3B8;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--navy);color:var(--ivory);font-family:'Inter Tight',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{
+  background:
+    radial-gradient(circle at 15% 10%, rgba(0,184,196,.08), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(228,176,74,.08), transparent 45%),
+    var(--navy);
+  min-height:100vh;
+}
+
+/* GRAIN */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  opacity:.05;mix-blend-mode:overlay
+}
+
+.shell{max-width:1280px;margin:0 auto;padding:32px 36px 80px;position:relative;z-index:2}
+
+/* HEADER */
+.header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding-bottom:32px;margin-bottom:40px;
+  border-bottom:1px solid rgba(228,176,74,.15);
+  gap:32px
+}
+.brand{display:flex;align-items:center;gap:16px}
+.brand-mark{
+  width:46px;height:46px;position:relative;flex-shrink:0;
+  background:radial-gradient(circle at 30% 30%, var(--gold) 0%, var(--gold-soft) 60%, transparent 70%);
+  border-radius:50%;
+  box-shadow:0 0 28px rgba(228,176,74,.4), inset -4px -4px 10px rgba(0,0,0,.3)
+}
+.brand-mark::after{
+  content:'';position:absolute;inset:10px;border-radius:50%;
+  background:conic-gradient(from 45deg, transparent 0deg, var(--navy) 90deg, transparent 180deg, var(--navy) 270deg);
+  opacity:.4;animation:spin 14s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.brand-text .t1{font-family:'Fraunces',serif;font-weight:500;font-size:18px;letter-spacing:-.3px;line-height:1.1}
+.brand-text .t2{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:2.5px;text-transform:uppercase;margin-top:3px}
+
+.header-meta{
+  display:flex;flex-direction:column;align-items:flex-end;gap:4px;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:2px;color:rgba(244,239,230,.5)
+}
+.header-meta .v{color:var(--gold)}
+
+/* HERO */
+.hero{margin-bottom:52px;max-width:780px}
+.kicker{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3.5px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:18px;
+  display:flex;align-items:center;gap:12px
+}
+.kicker::before{content:'';width:32px;height:1px;background:var(--gold)}
+h1{
+  font-family:'Fraunces',serif;font-weight:300;
+  font-size:clamp(44px,5.5vw,78px);line-height:.98;letter-spacing:-.022em;
+  margin-bottom:20px
+}
+h1 em{color:var(--gold);font-style:italic;font-weight:400}
+h1 .outline{
+  -webkit-text-stroke:1.5px var(--ivory);color:transparent;font-style:italic;font-weight:300
+}
+.lede{font-size:16px;line-height:1.6;color:rgba(244,239,230,.75);font-weight:300;max-width:700px}
+
+/* VADO LEGEND BAR */
+.vado-legend{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin:32px 0 40px;
+  background:rgba(228,176,74,.15);padding:1px;border-radius:3px;overflow:hidden
+}
+.legend-cell{
+  padding:18px 22px;background:linear-gradient(165deg,rgba(20,40,71,.8),rgba(10,22,40,.6));
+  display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden
+}
+.legend-cell::before{
+  content:attr(data-letter);position:absolute;top:-18px;right:-10px;
+  font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:120px;
+  color:var(--gold);opacity:.06;line-height:1;pointer-events:none
+}
+.legend-cell .lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:2.5px;color:var(--gold);text-transform:uppercase;position:relative}
+.legend-cell .nm{font-family:'Fraunces',serif;font-size:20px;font-weight:500;line-height:1.1;position:relative}
+.legend-cell .ds{font-size:11.5px;line-height:1.4;color:rgba(244,239,230,.7);margin-top:4px;position:relative}
+
+/* INPUT CARD */
+.input-card{
+  background:linear-gradient(165deg, rgba(20,40,71,.75), rgba(15,31,58,.55));
+  border:1px solid rgba(228,176,74,.2);
+  border-radius:8px;padding:4px;
+  backdrop-filter:blur(10px);
+  position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.35)
+}
+
+/* TABS */
+.tabs{
+  display:flex;gap:2px;background:rgba(10,22,40,.5);padding:4px;border-radius:6px 6px 0 0;
+  border-bottom:1px solid rgba(228,176,74,.1)
+}
+.tab{
+  flex:1;padding:14px 18px;border:none;cursor:pointer;
+  background:transparent;color:rgba(244,239,230,.5);
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;
+  text-transform:uppercase;border-radius:4px;transition:all .3s;
+  display:flex;align-items:center;justify-content:center;gap:10px
+}
+.tab:hover:not(.active){color:rgba(244,239,230,.8)}
+.tab.active{
+  background:rgba(228,176,74,.12);color:var(--gold);
+  box-shadow:inset 0 -2px 0 var(--gold)
+}
+.tab .ic{font-size:14px}
+
+.input-body{padding:28px 32px 32px}
+
+/* PANE - text */
+.pane{display:none}
+.pane.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.field-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--teal);margin-bottom:10px;
+  display:flex;align-items:center;gap:10px
+}
+.field-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal)}
+
+textarea.brief{
+  width:100%;min-height:180px;padding:18px 20px;
+  background:rgba(10,22,40,.6);border:1px solid rgba(228,176,74,.18);
+  color:var(--ivory);font-family:'Inter Tight',sans-serif;font-size:14.5px;line-height:1.6;
+  border-radius:6px;resize:vertical;transition:border-color .3s;font-weight:300
+}
+textarea.brief:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(228,176,74,.1)}
+textarea.brief::placeholder{color:rgba(244,239,230,.35);font-style:italic}
+
+.hint-row{
+  margin-top:10px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(244,239,230,.4)
+}
+.hint-row b{color:var(--teal);font-weight:400}
+
+/* PANE - image */
+.drop{
+  border:2px dashed rgba(228,176,74,.3);border-radius:6px;
+  padding:48px 24px;text-align:center;cursor:pointer;
+  transition:all .3s;background:rgba(10,22,40,.3);
+  position:relative;overflow:hidden
+}
+.drop:hover,.drop.drag{border-color:var(--gold);background:rgba(228,176,74,.05)}
+.drop .ico{
+  width:56px;height:56px;margin:0 auto 16px;
+  border:1px solid var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:28px;color:var(--gold);font-weight:300
+}
+.drop .tl{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:6px;font-style:italic}
+.drop .sb{font-size:13px;color:rgba(244,239,230,.6);max-width:420px;margin:0 auto}
+.drop .sb b{color:var(--gold);font-weight:400;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px}
+input[type=file]{display:none}
+
+.preview-box{display:none;margin-top:16px}
+.preview-box.show{display:block;animation:fadeIn .4s ease}
+.preview-img{
+  max-width:100%;max-height:360px;border-radius:6px;
+  border:1px solid rgba(228,176,74,.2);display:block;margin:0 auto;
+  box-shadow:0 10px 30px rgba(0,0,0,.4)
+}
+.preview-meta{
+  margin-top:10px;display:flex;justify-content:space-between;align-items:center;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(244,239,230,.55);letter-spacing:1px
+}
+.remove-btn{
+  background:transparent;border:1px solid rgba(255,85,85,.35);color:var(--coral);
+  padding:5px 10px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;
+  font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;transition:all .3s
+}
+.remove-btn:hover{background:rgba(255,85,85,.1);border-color:var(--coral)}
+
+/* URL input */
+.url-group{display:flex;gap:10px;align-items:stretch}
+input.url{
+  flex:1;padding:16px 18px;
+  background:rgba(10,22,40,.6);border:1px solid rgba(228,176,74,.18);
+  color:var(--ivory);font-family:'JetBrains Mono',monospace;font-size:13.5px;
+  border-radius:6px;transition:border-color .3s
+}
+input.url:focus{outline:none;border-color:var(--gold)}
+input.url::placeholder{color:rgba(244,239,230,.3)}
+
+/* Audience */
+.audience-row{margin-top:18px}
+input.audience{
+  width:100%;padding:14px 16px;
+  background:rgba(10,22,40,.5);border:1px solid rgba(228,176,74,.15);
+  color:var(--ivory);font-family:'Inter Tight',sans-serif;font-size:13.5px;
+  border-radius:6px;transition:border-color .3s
+}
+input.audience:focus{outline:none;border-color:var(--gold)}
+input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
+
+/* ANALYZE BUTTON */
+.cta-row{margin-top:24px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.cta-hint{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(244,239,230,.45);letter-spacing:1px}
+.analyze-btn{
+  padding:16px 36px;border:none;cursor:pointer;
+  background:linear-gradient(135deg, var(--gold), var(--gold-soft));
+  color:var(--navy);font-family:'JetBrains Mono',monospace;font-size:11.5px;
+  letter-spacing:2.5px;text-transform:uppercase;font-weight:600;
+  border-radius:4px;transition:all .3s;
+  box-shadow:0 4px 20px rgba(228,176,74,.3);
+  display:flex;align-items:center;gap:12px
+}
+.analyze-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(228,176,74,.4)}
+.analyze-btn:disabled{opacity:.5;cursor:not-allowed}
+.analyze-btn .arr{transition:transform .3s}
+.analyze-btn:hover:not(:disabled) .arr{transform:translateX(4px)}
+
+/* LOADING */
+.loading-overlay{
+  position:fixed;inset:0;z-index:9990;
+  background:rgba(10,22,40,.9);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .4s
+}
+.loading-overlay.show{display:flex;opacity:1}
+.loading-content{text-align:center;max-width:400px;padding:0 30px}
+.brain-loader{
+  width:90px;height:90px;margin:0 auto 28px;position:relative
+}
+.brain-loader svg{width:100%;height:100%}
+.brain-pulse{transform-origin:center;animation:brainPulse 2.2s ease-in-out infinite}
+@keyframes brainPulse{0%,100%{opacity:.3;transform:scale(.9)}50%{opacity:1;transform:scale(1.05)}}
+.load-title{font-family:'Fraunces',serif;font-size:26px;font-weight:400;font-style:italic;color:var(--ivory);margin-bottom:12px}
+.load-stage{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--teal);text-transform:uppercase;min-height:16px}
+
+/* RESULTS */
+.results{margin-top:52px;display:none}
+.results.show{display:block;animation:fadeIn .6s ease}
+.results-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:32px;padding-bottom:18px;border-bottom:1px solid rgba(228,176,74,.15);gap:20px
+}
+.results-header h2{font-family:'Fraunces',serif;font-weight:400;font-size:32px;line-height:1.1;letter-spacing:-.01em}
+.results-header h2 em{color:var(--gold);font-style:italic}
+.new-analysis-btn{
+  padding:10px 18px;background:transparent;border:1px solid rgba(228,176,74,.3);color:var(--gold);
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  border-radius:3px;cursor:pointer;transition:all .3s;flex-shrink:0
+}
+.new-analysis-btn:hover{background:rgba(228,176,74,.1);border-color:var(--gold)}
+
+/* SCORE BOARD */
+.score-board{
+  display:grid;grid-template-columns:1.1fr 2fr;gap:28px;margin-bottom:40px;
+  align-items:stretch
+}
+
+.global-score{
+  padding:32px;border-radius:8px;position:relative;overflow:hidden;
+  background:linear-gradient(165deg, rgba(20,40,71,.9), rgba(10,22,40,.7));
+  border:1px solid rgba(228,176,74,.2);
+  display:flex;flex-direction:column;justify-content:space-between;
+  min-height:280px
+}
+.global-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--teal);text-transform:uppercase}
+.score-ring{position:relative;width:200px;height:200px;margin:0 auto}
+.score-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-ring-track{fill:none;stroke:rgba(244,239,230,.1);stroke-width:8}
+.score-ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
+.score-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center
+}
+.score-num{font-family:'Fraunces',serif;font-size:68px;font-weight:300;line-height:1}
+.score-suffix{font-size:32px;opacity:.5;vertical-align:top;margin-left:4px}
+.score-verdict{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;
+  text-transform:uppercase;margin-top:6px;padding:4px 10px;border-radius:2px
+}
+.verdict-low{background:rgba(255,85,85,.15);color:var(--red);border:1px solid rgba(255,85,85,.3)}
+.verdict-mid{background:rgba(255,180,68,.15);color:var(--amber);border:1px solid rgba(255,180,68,.3)}
+.verdict-high{background:rgba(94,227,184,.15);color:var(--green);border:1px solid rgba(94,227,184,.3)}
+
+.summary-text{
+  font-family:'Fraunces',serif;font-style:italic;font-size:14.5px;line-height:1.6;
+  color:rgba(244,239,230,.85);text-align:center;font-weight:300;margin-top:20px
+}
+
+/* VADO CARDS */
+.vado-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px
+}
+.vado-card{
+  padding:22px;border-radius:6px;position:relative;overflow:hidden;
+  background:linear-gradient(165deg, rgba(20,40,71,.65), rgba(15,31,58,.4));
+  border:1px solid rgba(228,176,74,.15);
+  display:flex;flex-direction:column;gap:10px;
+  transition:all .3s cubic-bezier(.4,0,.2,1);cursor:pointer
+}
+.vado-card:hover{transform:translateY(-3px);border-color:var(--gold)}
+.vado-card::before{
+  content:attr(data-letter);position:absolute;top:-30px;right:-16px;
+  font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:160px;
+  color:var(--gold);opacity:.08;line-height:1;pointer-events:none
+}
+.vado-head{display:flex;align-items:center;justify-content:space-between;position:relative}
+.vado-name{display:flex;flex-direction:column;gap:3px}
+.vado-name .lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:2px;color:var(--gold);text-transform:uppercase}
+.vado-name .nm{font-family:'Fraunces',serif;font-size:22px;font-weight:500;line-height:1}
+.vado-score{font-family:'Fraunces',serif;font-size:32px;font-weight:300;line-height:1;position:relative}
+.vado-score.s-low{color:var(--red)}
+.vado-score.s-mid{color:var(--amber)}
+.vado-score.s-high{color:var(--green)}
+.vado-score .u{font-size:16px;opacity:.5}
+
+.vado-bar{height:4px;background:rgba(244,239,230,.08);border-radius:2px;overflow:hidden;position:relative}
+.vado-bar-fill{height:100%;border-radius:2px;width:0;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.vado-bar-fill.s-low{background:linear-gradient(90deg, var(--red), var(--coral))}
+.vado-bar-fill.s-mid{background:linear-gradient(90deg, var(--amber), var(--gold))}
+.vado-bar-fill.s-high{background:linear-gradient(90deg, var(--mint), var(--teal))}
+
+.vado-insight{font-size:13px;line-height:1.55;color:rgba(244,239,230,.85);margin-top:4px}
+
+/* DETAIL SECTIONS */
+.detail-section{margin-top:40px}
+.section-title{
+  font-family:'Fraunces',serif;font-weight:500;font-size:24px;line-height:1.1;
+  margin-bottom:6px;letter-spacing:-.01em
+}
+.section-title em{color:var(--gold);font-style:italic;font-weight:400}
+.section-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:22px}
+
+/* RECOMMENDATIONS */
+.rec-list{display:flex;flex-direction:column;gap:14px}
+.rec-item{
+  padding:20px 22px;border-radius:5px;
+  background:linear-gradient(90deg, rgba(228,176,74,.08), rgba(228,176,74,.01));
+  border-left:3px solid var(--gold);
+  display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start
+}
+.rec-num{
+  font-family:'Fraunces',serif;font-size:30px;font-weight:300;font-style:italic;color:var(--gold);line-height:.9;padding-top:2px
+}
+.rec-body{display:flex;flex-direction:column;gap:6px}
+.rec-axis{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:2px;color:var(--teal);text-transform:uppercase}
+.rec-title{font-family:'Fraunces',serif;font-size:17px;font-weight:500;line-height:1.25}
+.rec-desc{font-size:13.5px;line-height:1.55;color:rgba(244,239,230,.8)}
+.rec-desc strong{color:var(--gold);font-weight:500}
+
+/* NEURAL MAP */
+.neural-map{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;
+  padding:4px;background:rgba(228,176,74,.1);border-radius:4px
+}
+.neural-cell{
+  padding:16px 14px;border-radius:3px;background:linear-gradient(165deg, rgba(20,40,71,.85), rgba(10,22,40,.6));
+  display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;
+  position:relative;transition:transform .3s
+}
+.neural-cell:hover{transform:translateY(-2px)}
+.neural-dot{width:14px;height:14px;border-radius:50%;box-shadow:0 0 12px currentColor}
+.neural-name{font-family:'Fraunces',serif;font-size:14px;font-weight:500;line-height:1.1}
+.neural-status{
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;padding:3px 8px;border-radius:2px
+}
+.ns-on{background:rgba(94,227,184,.15);color:var(--mint);border:1px solid rgba(94,227,184,.3)}
+.ns-partial{background:rgba(255,180,68,.15);color:var(--amber);border:1px solid rgba(255,180,68,.3)}
+.ns-off{background:rgba(120,120,120,.15);color:rgba(244,239,230,.4);border:1px solid rgba(244,239,230,.15)}
+.neural-body{font-size:11px;line-height:1.4;color:rgba(244,239,230,.7);font-weight:300}
+
+/* FINDINGS */
+.findings{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px
+}
+.find-card{
+  padding:22px;border-radius:6px;
+  background:rgba(20,40,71,.4);border:1px solid rgba(228,176,74,.12)
+}
+.find-card.good{border-color:rgba(94,227,184,.3);background:linear-gradient(165deg, rgba(94,227,184,.05), rgba(20,40,71,.3))}
+.find-card.risk{border-color:rgba(255,180,68,.3);background:linear-gradient(165deg, rgba(255,180,68,.05), rgba(20,40,71,.3))}
+.find-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase
+}
+.find-card.good .find-head{color:var(--mint)}
+.find-card.risk .find-head{color:var(--amber)}
+.find-head .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.find-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.find-list li{padding-left:18px;position:relative;font-size:13.5px;line-height:1.55;color:rgba(244,239,230,.85)}
+.find-list li::before{content:'';position:absolute;left:0;top:9px;width:9px;height:1px}
+.find-card.good .find-list li::before{background:var(--mint)}
+.find-card.risk .find-list li::before{background:var(--amber)}
+
+/* ERROR */
+.error-box{
+  margin-top:20px;padding:16px 20px;border-radius:5px;
+  background:rgba(255,85,85,.08);border:1px solid rgba(255,85,85,.25);border-left:3px solid var(--coral);
+  font-size:13px;line-height:1.5;color:rgba(244,239,230,.9);display:none
+}
+.error-box.show{display:block}
+.error-box b{color:var(--coral)}
+
+/* FOOTER */
+.footer{
+  margin-top:80px;padding-top:28px;border-top:1px solid rgba(228,176,74,.12);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(244,239,230,.35);letter-spacing:1.5px
+}
+
+@media(max-width:900px){
+  .shell{padding:20px 18px 60px}
+  .vado-legend{grid-template-columns:1fr 1fr}
+  .score-board{grid-template-columns:1fr}
+  .vado-grid{grid-template-columns:1fr}
+  .findings{grid-template-columns:1fr}
+  .neural-map{grid-template-columns:1fr 1fr;overflow-x:hidden}
+  h1{font-size:40px}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">
+        <div class="t1">VADO Evaluator</div>
+        <div class="t2">Behavioral Intelligence Lab</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div>NEUROMARKETING · <span class="v">v 1.0</span></div>
+      <div>Javier Rubiano · Universidad de La Salle</div>
+      <div style="margin-top:4px;font-size:9px">Cátedra de Neuromarketing · Posgrado</div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="kicker">Analizador de estímulos publicitarios</div>
+    <h1>Evalúa una idea, aviso o página<br>con la <em>metodología VADO</em>.</h1>
+    <p class="lede">Ingresa un brief, sube una imagen publicitaria, o pega la URL de una landing page. La app analiza el estímulo bajo los cuatro ejes del método VADO — Ver, Activar, Decidir, Operar — y entrega puntaje por eje, activación neural esperada y recomendaciones específicas de ajuste.</p>
+  </section>
+
+  <!-- VADO LEGEND -->
+  <div class="vado-legend">
+    <div class="legend-cell" data-letter="V">
+      <div class="lbl">Eje 01</div>
+      <div class="nm">Ver</div>
+      <div class="ds">Saliencia visual, jerarquía, contraste — capturar el lóbulo occipital en el primer segundo.</div>
+    </div>
+    <div class="legend-cell" data-letter="A">
+      <div class="lbl">Eje 02</div>
+      <div class="nm">Activar</div>
+      <div class="ds">Emoción, storytelling, personajes — disparar el sistema límbico y el hemisferio derecho.</div>
+    </div>
+    <div class="legend-cell" data-letter="D">
+      <div class="lbl">Eje 03</div>
+      <div class="nm">Decidir</div>
+      <div class="ds">Claims defendibles, prueba social, arquitectura de opciones — darle razones al lóbulo frontal.</div>
+    </div>
+    <div class="legend-cell" data-letter="O">
+      <div class="lbl">Eje 04</div>
+      <div class="nm">Operar</div>
+      <div class="ds">CTA claro, baja fricción, un solo paso — facilitar la acción en el lóbulo parietal-frontal.</div>
+    </div>
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="input-card">
+    <div class="tabs">
+      <button class="tab active" data-tab="text"><span class="ic">✎</span> Idea o Brief</button>
+      <button class="tab" data-tab="image"><span class="ic">◈</span> Imagen / Aviso</button>
+      <button class="tab" data-tab="url"><span class="ic">⌖</span> URL / Landing</button>
+    </div>
+
+    <div class="input-body">
+
+      <!-- TEXT PANE -->
+      <div class="pane active" data-pane="text">
+        <div class="field-label">Descripción de la idea o campaña</div>
+        <textarea class="brief" id="briefText" placeholder="Ej: Campaña digital para una marca de café premium dirigida a profesionales de 30-45 años. Concepto: 'El ritual que te devuelve al centro'. Pieza principal: video de 30s mostrando a una ejecutiva abriendo una bolsa mate negra, aroma en cámara lenta, primer sorbo, y cierre con la taza sobre un cuaderno abierto. Música ambient, narración breve. CTA: 'Ordena tu primera bolsa con 20% de descuento'."></textarea>
+        <div class="hint-row">
+          <div>Describe estímulo + contexto + pieza visual si aplica</div>
+          <div><b>Óptimo</b> 120–500 palabras</div>
+        </div>
+      </div>
+
+      <!-- IMAGE PANE -->
+      <div class="pane" data-pane="image">
+        <div class="field-label">Imagen del aviso publicitario</div>
+        <div class="drop" id="drop">
+          <div class="ico">+</div>
+          <div class="tl">Arrastra una imagen o haz clic</div>
+          <div class="sb">Piezas gráficas, frames de video, mockups digitales. <b>JPG · PNG · WEBP · max 5MB</b></div>
+          <input type="file" id="fileInput" accept="image/*">
+        </div>
+        <div class="preview-box" id="previewBox">
+          <img class="preview-img" id="previewImg" alt="preview">
+          <div class="preview-meta">
+            <span id="previewName">archivo.jpg</span>
+            <button class="remove-btn" id="removeImg">Quitar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- URL PANE -->
+      <div class="pane" data-pane="url">
+        <div class="field-label">URL de la landing o página a evaluar</div>
+        <div class="url-group">
+          <input type="url" class="url" id="urlInput" placeholder="https://tudominio.com/landing-page">
+        </div>
+        <div class="hint-row">
+          <div>La app leerá la página y evaluará copy, estructura, CTAs y jerarquía visual.</div>
+        </div>
+      </div>
+
+      <!-- AUDIENCE (shared) -->
+      <div class="audience-row">
+        <div class="field-label">Audiencia objetivo <span style="color:rgba(244,239,230,.4);margin-left:8px;text-transform:none;letter-spacing:0;font-family:'Inter Tight';font-weight:300">(opcional, mejora la precisión)</span></div>
+        <input type="text" class="audience" id="audienceInput" placeholder="Ej: mujeres 28-42 años, estrato 4-6, profesionales de marketing en Bogotá">
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <div class="cta-row">
+        <div class="cta-hint">◉ Análisis basado en teoría de lóbulos y hemisferios · framework VADO</div>
+        <button class="analyze-btn" id="analyzeBtn">
+          <span>Evaluar</span>
+          <span class="arr">→</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <section class="results" id="results">
+
+    <div class="results-header">
+      <h2>Evaluación <em>VADO</em> del estímulo</h2>
+      <button class="new-analysis-btn" id="newAnalysisBtn">← Nueva evaluación</button>
+    </div>
+
+    <div class="score-board">
+      <!-- Global Score -->
+      <div class="global-score">
+        <div class="global-label">Score global VADO</div>
+        <div class="score-ring">
+          <svg viewBox="0 0 220 220">
+            <circle class="score-ring-track" cx="110" cy="110" r="94"/>
+            <circle class="score-ring-fill" id="globalRing" cx="110" cy="110" r="94" stroke="var(--gold)" stroke-dasharray="590.6" stroke-dashoffset="590.6"/>
+          </svg>
+          <div class="score-center">
+            <div class="score-num"><span id="globalNum">0</span><span class="score-suffix">/100</span></div>
+            <div class="score-verdict" id="globalVerdict">Evaluando…</div>
+          </div>
+        </div>
+        <div class="summary-text" id="summaryText">—</div>
+      </div>
+
+      <!-- VADO Cards -->
+      <div class="vado-grid">
+        <div class="vado-card" data-letter="V">
+          <div class="vado-head">
+            <div class="vado-name"><div class="lbl">Eje 01</div><div class="nm">Ver</div></div>
+            <div class="vado-score" id="scoreV">0<span class="u">/100</span></div>
+          </div>
+          <div class="vado-bar"><div class="vado-bar-fill" id="barV"></div></div>
+          <div class="vado-insight" id="insightV">—</div>
+        </div>
+        <div class="vado-card" data-letter="A">
+          <div class="vado-head">
+            <div class="vado-name"><div class="lbl">Eje 02</div><div class="nm">Activar</div></div>
+            <div class="vado-score" id="scoreA">0<span class="u">/100</span></div>
+          </div>
+          <div class="vado-bar"><div class="vado-bar-fill" id="barA"></div></div>
+          <div class="vado-insight" id="insightA">—</div>
+        </div>
+        <div class="vado-card" data-letter="D">
+          <div class="vado-head">
+            <div class="vado-name"><div class="lbl">Eje 03</div><div class="nm">Decidir</div></div>
+            <div class="vado-score" id="scoreD">0<span class="u">/100</span></div>
+          </div>
+          <div class="vado-bar"><div class="vado-bar-fill" id="barD"></div></div>
+          <div class="vado-insight" id="insightD">—</div>
+        </div>
+        <div class="vado-card" data-letter="O">
+          <div class="vado-head">
+            <div class="vado-name"><div class="lbl">Eje 04</div><div class="nm">Operar</div></div>
+            <div class="vado-score" id="scoreO">0<span class="u">/100</span></div>
+          </div>
+          <div class="vado-bar"><div class="vado-bar-fill" id="barO"></div></div>
+          <div class="vado-insight" id="insightO">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINDINGS -->
+    <section class="detail-section">
+      <h3 class="section-title">Hallazgos <em>clave</em></h3>
+      <div class="section-sub">Lo que funciona · Lo que genera fricción</div>
+      <div class="findings">
+        <div class="find-card good">
+          <div class="find-head"><div class="dot"></div>Fortalezas detectadas</div>
+          <ul class="find-list" id="strengthsList"></ul>
+        </div>
+        <div class="find-card risk">
+          <div class="find-head"><div class="dot"></div>Áreas de riesgo o mejora</div>
+          <ul class="find-list" id="risksList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEURAL MAP -->
+    <section class="detail-section">
+      <h3 class="section-title">Activación <em>neural</em> esperada</h3>
+      <div class="section-sub">Lóbulos y sistema límbico estimulados por el estímulo</div>
+      <div class="neural-map" id="neuralMap"></div>
+    </section>
+
+    <!-- RECOMMENDATIONS -->
+    <section class="detail-section">
+      <h3 class="section-title">Recomendaciones <em>de ajuste</em></h3>
+      <div class="section-sub">Intervenciones priorizadas por impacto neural</div>
+      <div class="rec-list" id="recList"></div>
+    </section>
+
+  </section>
+
+  <footer class="footer">
+    <div>◆ VADO = VER · ACTIVAR · DECIDIR · OPERAR</div>
+    <div>BEHAVIORAL INTELLIGENCE LAB · VISORIA INTELLIGENCE</div>
+  </footer>
+
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <div class="brain-loader">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g class="brain-pulse">
+          <ellipse cx="50" cy="50" rx="38" ry="32" fill="none" stroke="#E4B04A" stroke-width="1.5" opacity=".6"/>
+          <path d="M 50 18 L 50 82" stroke="#E4B04A" stroke-width="1" opacity=".4"/>
+          <circle cx="35" cy="42" r="3" fill="#00B8C4"/>
+          <circle cx="65" cy="42" r="3" fill="#FF6B9D"/>
+          <circle cx="30" cy="58" r="2.5" fill="#5EE3B8"/>
+          <circle cx="70" cy="58" r="2.5" fill="#9B7EDC"/>
+          <circle cx="50" cy="65" r="2" fill="#E4B04A"/>
+          <path d="M 35 42 Q 50 35 65 42" stroke="#00B8C4" stroke-width=".8" fill="none" opacity=".5"/>
+          <path d="M 30 58 Q 50 65 70 58" stroke="#5EE3B8" stroke-width=".8" fill="none" opacity=".5"/>
+        </g>
+      </svg>
+    </div>
+    <div class="load-title">Analizando el estímulo</div>
+    <div class="load-stage" id="loadStage">Conectando con el modelo neural…</div>
+  </div>
+</div>
+
+<script>
+/* ========== TAB LOGIC ========== */
+const tabs = document.querySelectorAll('.tab');
+const panes = document.querySelectorAll('.pane');
+let activeTab = 'text';
+tabs.forEach(t => t.addEventListener('click', ()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  panes.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  activeTab = t.dataset.tab;
+  document.querySelector(`.pane[data-pane="${activeTab}"]`).classList.add('active');
+  document.getElementById('errorBox').classList.remove('show');
+}));
+
+/* ========== FILE UPLOAD ========== */
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('fileInput');
+const previewBox = document.getElementById('previewBox');
+const previewImg = document.getElementById('previewImg');
+const previewName = document.getElementById('previewName');
+let uploadedImageData = null; // { base64, mediaType, name }
+
+drop.addEventListener('click', ()=>fileInput.click());
+drop.addEventListener('dragover', (e)=>{e.preventDefault();drop.classList.add('drag')});
+drop.addEventListener('dragleave', ()=>drop.classList.remove('drag'));
+drop.addEventListener('drop', (e)=>{
+  e.preventDefault();drop.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if(f) handleFile(f);
+});
+fileInput.addEventListener('change', (e)=>{
+  const f = e.target.files[0];
+  if(f) handleFile(f);
+});
+document.getElementById('removeImg').addEventListener('click', ()=>{
+  uploadedImageData = null;
+  previewBox.classList.remove('show');
+  fileInput.value = '';
+});
+
+function handleFile(file){
+  if(!file.type.startsWith('image/')){
+    showError('Formato no soportado. Usa JPG, PNG o WEBP.');
+    return;
+  }
+  if(file.size > 5*1024*1024){
+    showError('La imagen excede 5MB. Comprímela antes de subirla.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    const dataUrl = e.target.result;
+    const base64 = dataUrl.split(',')[1];
+    uploadedImageData = { base64, mediaType: file.type, name: file.name };
+    previewImg.src = dataUrl;
+    previewName.textContent = file.name + ' · ' + (file.size/1024).toFixed(0) + ' KB';
+    previewBox.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function showError(msg){
+  const eb = document.getElementById('errorBox');
+  eb.innerHTML = '<b>Aviso:</b> ' + msg;
+  eb.classList.add('show');
+  setTimeout(()=>eb.classList.remove('show'), 7000);
+}
+
+/* ========== ANALYSIS LOGIC ========== */
+const analyzeBtn = document.getElementById('analyzeBtn');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const loadStage = document.getElementById('loadStage');
+const results = document.getElementById('results');
+
+const LOAD_STAGES = [
+  'Conectando con el modelo neural…',
+  'Descomponiendo el estímulo en ejes VADO…',
+  'Evaluando saliencia visual (Ver)…',
+  'Midiendo carga emocional (Activar)…',
+  'Analizando estructura de decisión (Decidir)…',
+  'Auditando fricción operativa (Operar)…',
+  'Mapeando activación cerebral…',
+  'Generando recomendaciones…'
+];
+
+let stageTimer = null;
+function runLoadingStages(){
+  let i = 0;
+  loadStage.textContent = LOAD_STAGES[0];
+  stageTimer = setInterval(()=>{
+    i = (i+1) % LOAD_STAGES.length;
+    loadStage.textContent = LOAD_STAGES[i];
+  }, 1800);
+}
+function stopLoadingStages(){ if(stageTimer){ clearInterval(stageTimer); stageTimer = null; } }
+
+analyzeBtn.addEventListener('click', async ()=>{
+  document.getElementById('errorBox').classList.remove('show');
+
+  let input = null;
+  if(activeTab === 'text'){
+    const t = document.getElementById('briefText').value.trim();
+    if(t.length < 30){ showError('Describe la idea con un poco más de detalle (mínimo 30 caracteres).'); return; }
+    input = { kind:'text', text:t };
+  } else if(activeTab === 'image'){
+    if(!uploadedImageData){ showError('Sube una imagen para evaluar.'); return; }
+    input = { kind:'image', image:uploadedImageData };
+  } else if(activeTab === 'url'){
+    const u = document.getElementById('urlInput').value.trim();
+    if(!u || !/^https?:\/\//i.test(u)){ showError('Ingresa una URL válida que empiece con http:// o https://'); return; }
+    input = { kind:'url', url:u };
+  }
+
+  const audience = document.getElementById('audienceInput').value.trim();
+
+  loadingOverlay.classList.add('show');
+  runLoadingStages();
+  analyzeBtn.disabled = true;
+
+  try{
+    const evaluation = await evaluateStimulus(input, audience);
+    renderResults(evaluation);
+    results.classList.add('show');
+    setTimeout(()=>results.scrollIntoView({behavior:'smooth', block:'start'}), 200);
+  } catch(err){
+    console.error(err);
+    showError('No se pudo completar la evaluación: ' + (err.message || 'error desconocido') + '. Intenta de nuevo.');
+  } finally {
+    stopLoadingStages();
+    loadingOverlay.classList.remove('show');
+    analyzeBtn.disabled = false;
+  }
+});
+
+document.getElementById('newAnalysisBtn').addEventListener('click', ()=>{
+  results.classList.remove('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ========== API CALL ========== */
+const SYSTEM_PROMPT = `Eres un analista senior de neuromarketing del Behavioral Intelligence Lab (VISORIA Intelligence), especializado en evaluar estímulos publicitarios con el framework VADO desarrollado por Javier Rubiano en la Universidad de La Salle.
+
+VADO = Ver · Activar · Decidir · Operar:
+- VER (lóbulo occipital): saliencia visual, jerarquía, contraste, legibilidad en el primer segundo, uso de rostros humanos, composición. Pregunta clave: ¿gana la atención antes que el competidor?
+- ACTIVAR (sistema límbico + hemisferio derecho): emoción, storytelling, personajes empáticos, música, metáfora, sorpresa. Pregunta clave: ¿emociona, conecta, se siente humano?
+- DECIDIR (lóbulo frontal + hemisferio izquierdo): claims defendibles, prueba social, beneficios jerarquizados, arquitectura de opciones, precio, diferenciación. Pregunta clave: ¿da razones defendibles para decidir?
+- OPERAR (lóbulo parietal-frontal): CTA claro, fricción baja, un solo paso, ruta de acción evidente. Pregunta clave: ¿facilita la acción sin carga cognitiva?
+
+Califica cada eje de 0 a 100, donde:
+- 0-40 = deficiente (s-low)
+- 41-70 = promedio/mejorable (s-mid)
+- 71-100 = excelente (s-high)
+
+Para CADA estímulo que analices, devuelve EXCLUSIVAMENTE un JSON válido — sin backticks, sin prefacio, sin explicación fuera del JSON — con esta estructura exacta:
+
+{
+  "global_score": <número 0-100>,
+  "verdict": "<texto corto: 'Débil' | 'Aceptable' | 'Sólido' | 'Excelente'>",
+  "summary": "<oración de ~20 palabras, en español, tono editorial, que sintetiza el diagnóstico>",
+  "axes": {
+    "V": {"score": <0-100>, "insight": "<1-2 frases concretas en español sobre el eje Ver>"},
+    "A": {"score": <0-100>, "insight": "<1-2 frases sobre Activar>"},
+    "D": {"score": <0-100>, "insight": "<1-2 frases sobre Decidir>"},
+    "O": {"score": <0-100>, "insight": "<1-2 frases sobre Operar>"}
+  },
+  "strengths": ["<fortaleza 1>", "<fortaleza 2>", "<fortaleza 3>"],
+  "risks": ["<riesgo 1>", "<riesgo 2>", "<riesgo 3>"],
+  "neural_activation": {
+    "occipital": {"status": "on|partial|off", "note": "<frase corta>"},
+    "temporal": {"status": "on|partial|off", "note": "<frase corta>"},
+    "limbic": {"status": "on|partial|off", "note": "<frase corta>"},
+    "parietal": {"status": "on|partial|off", "note": "<frase corta>"},
+    "frontal": {"status": "on|partial|off", "note": "<frase corta>"}
+  },
+  "recommendations": [
+    {"axis": "V|A|D|O", "title": "<título corto>", "description": "<ajuste específico y accionable; usa <strong>...</strong> para destacar la intervención>"},
+    {"axis": "V|A|D|O", "title": "...", "description": "..."},
+    {"axis": "V|A|D|O", "title": "...", "description": "..."},
+    {"axis": "V|A|D|O", "title": "...", "description": "..."},
+    {"axis": "V|A|D|O", "title": "...", "description": "..."}
+  ]
+}
+
+Reglas obligatorias:
+- Escribe en español neutro profesional (Colombia).
+- Entrega entre 3 y 5 recomendaciones priorizadas por impacto.
+- Cada fortaleza, riesgo y recomendación debe ser concreta y referirse al estímulo analizado (no genérica).
+- Si no tienes información suficiente sobre un eje (por ejemplo, un texto que no describe el visual), indícalo en el insight pero igual entrega un score tentativo.
+- Si usas la herramienta de búsqueda web para leer una URL, DESPUÉS de recibir los resultados escribe ÚNICAMENTE el JSON final. No escribas texto explicativo antes ni después del JSON.
+- SOLO JSON. Sin texto antes o después. Sin backticks. Sin markdown.`;
+
+async function evaluateStimulus(input, audience){
+  // Build the user message content
+  let userContent;
+  const audienceSuffix = audience ? `\n\nAudiencia objetivo: ${audience}` : '';
+
+  if(input.kind === 'text'){
+    userContent = [{
+      type: 'text',
+      text: `Analiza el siguiente estímulo publicitario con la metodología VADO. Devuelve únicamente el JSON estructurado.\n\nEstímulo (descripción/brief):\n${input.text}${audienceSuffix}`
+    }];
+  } else if(input.kind === 'image'){
+    userContent = [
+      {
+        type: 'image',
+        source: { type: 'base64', media_type: input.image.mediaType, data: input.image.base64 }
+      },
+      {
+        type: 'text',
+        text: `Analiza la imagen publicitaria anterior con la metodología VADO. Observa: composición, jerarquía visual, uso de rostros, texto, CTA, emoción proyectada, coherencia. Devuelve únicamente el JSON estructurado.${audienceSuffix}`
+      }
+    ];
+  } else if(input.kind === 'url'){
+    userContent = [{
+      type: 'text',
+      text: `Accede a la siguiente URL, analiza su contenido (copy, estructura, jerarquía visual inferida, CTAs, claims, prueba social) y evalúala con la metodología VADO. Devuelve únicamente el JSON estructurado.\n\nURL: ${input.url}${audienceSuffix}`
+    }];
+  }
+
+  const body = {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: input.kind === 'url' ? 4000 : 1800,
+    system: SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: userContent }]
+  };
+
+  // Enable web search for URL mode
+  if(input.kind === 'url'){
+    body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+  }
+
+  // API endpoint — Cloudflare Worker proxy (keeps API key safe on server)
+  // Change this if you deploy the worker to a different subdomain
+  const API_ENDPOINT = 'https://vado-evaluator.jfrubiano.workers.dev';
+
+  const response = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if(!response.ok){
+    const errText = await response.text();
+    let errMsg = errText.slice(0, 300);
+    try {
+      const errJson = JSON.parse(errText);
+      errMsg = errJson.message || errJson.error || errMsg;
+    } catch(_){}
+    throw new Error('Error del servidor (' + response.status + '): ' + errMsg);
+  }
+
+  const data = await response.json();
+
+  // Extract text from ALL text blocks across the response
+  // When web_search is used, there are text blocks before AND after the tool calls.
+  // The JSON is typically in the FINAL text block — search from the end.
+  const textBlocks = data.content
+    .filter(b => b.type === 'text')
+    .map(b => b.text);
+
+  if(textBlocks.length === 0){
+    throw new Error('El modelo no devolvió texto analizable. Revisa la consola.');
+  }
+
+  // Try each text block in reverse order (last one most likely has the JSON)
+  let parsed = null;
+  let lastError = null;
+  for(let i = textBlocks.length - 1; i >= 0; i--){
+    const candidate = textBlocks[i]
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/, '')
+      .replace(/```\s*$/, '')
+      .trim();
+    const firstBrace = candidate.indexOf('{');
+    const lastBrace = candidate.lastIndexOf('}');
+    if(firstBrace === -1 || lastBrace === -1) continue;
+    const jsonStr = candidate.slice(firstBrace, lastBrace + 1);
+    try {
+      parsed = JSON.parse(jsonStr);
+      break;
+    } catch(e){
+      lastError = e;
+    }
+  }
+
+  if(!parsed){
+    console.error('All text blocks:', textBlocks);
+    throw new Error('No se pudo extraer JSON válido de la respuesta del modelo' + (lastError ? ': ' + lastError.message : '.'));
+  }
+
+  return parsed;
+}
+
+/* ========== RENDER RESULTS ========== */
+function scoreClass(score){
+  if(score <= 40) return 's-low';
+  if(score <= 70) return 's-mid';
+  return 's-high';
+}
+function verdictClass(score){
+  if(score <= 40) return 'verdict-low';
+  if(score <= 70) return 'verdict-mid';
+  return 'verdict-high';
+}
+
+function animateNumber(el, target, duration=1100){
+  const start = 0;
+  const startTime = performance.now();
+  function step(now){
+    const elapsed = now - startTime;
+    const t = Math.min(1, elapsed/duration);
+    const eased = 1 - Math.pow(1-t, 3);
+    const val = Math.round(start + (target - start) * eased);
+    el.textContent = val;
+    if(t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function renderResults(r){
+  // Global
+  const globalRing = document.getElementById('globalRing');
+  const circumference = 2 * Math.PI * 94;
+  const offset = circumference * (1 - r.global_score/100);
+  globalRing.style.strokeDashoffset = offset;
+  const ringColor = r.global_score <= 40 ? 'var(--red)' : r.global_score <= 70 ? 'var(--amber)' : 'var(--green)';
+  globalRing.setAttribute('stroke', ringColor);
+
+  animateNumber(document.getElementById('globalNum'), r.global_score);
+
+  const verdictEl = document.getElementById('globalVerdict');
+  verdictEl.textContent = r.verdict || '—';
+  verdictEl.className = 'score-verdict ' + verdictClass(r.global_score);
+
+  document.getElementById('summaryText').textContent = '"' + r.summary + '"';
+
+  // Axes
+  ['V','A','D','O'].forEach((axis, idx)=>{
+    const axisData = r.axes[axis] || {score:0, insight:'—'};
+    const scoreEl = document.getElementById('score'+axis);
+    const barEl = document.getElementById('bar'+axis);
+    const insightEl = document.getElementById('insight'+axis);
+    const cls = scoreClass(axisData.score);
+
+    scoreEl.className = 'vado-score ' + cls;
+    scoreEl.innerHTML = axisData.score + '<span class="u">/100</span>';
+    barEl.className = 'vado-bar-fill ' + cls;
+    setTimeout(()=>{ barEl.style.width = axisData.score + '%'; }, 200 + idx*120);
+    insightEl.textContent = axisData.insight;
+  });
+
+  // Strengths
+  const strengthsList = document.getElementById('strengthsList');
+  strengthsList.innerHTML = (r.strengths || []).map(s => `<li>${escapeHtml(s)}</li>`).join('') || '<li>No se detectaron fortalezas claras.</li>';
+
+  // Risks
+  const risksList = document.getElementById('risksList');
+  risksList.innerHTML = (r.risks || []).map(s => `<li>${escapeHtml(s)}</li>`).join('') || '<li>No se detectaron riesgos significativos.</li>';
+
+  // Neural Map
+  const regions = [
+    {key:'occipital', name:'Occipital', color:'#9B7EDC', role:'Visión'},
+    {key:'temporal',  name:'Temporal',  color:'#FF6B9D', role:'Memoria'},
+    {key:'limbic',    name:'Límbico',   color:'#5EE3B8', role:'Emoción'},
+    {key:'parietal',  name:'Parietal',  color:'#00B8C4', role:'Atención'},
+    {key:'frontal',   name:'Frontal',   color:'#E4B04A', role:'Decisión'}
+  ];
+  const neuralMap = document.getElementById('neuralMap');
+  neuralMap.innerHTML = regions.map(reg => {
+    const data = (r.neural_activation || {})[reg.key] || {status:'off', note:'—'};
+    const statusLabel = data.status === 'on' ? 'Activado' : data.status === 'partial' ? 'Parcial' : 'Sin activar';
+    const statusClass = 'ns-' + data.status;
+    return `
+      <div class="neural-cell">
+        <div class="neural-dot" style="background:${reg.color};color:${reg.color}"></div>
+        <div class="neural-name">${reg.name}</div>
+        <div class="neural-status ${statusClass}">${statusLabel}</div>
+        <div class="neural-body">${escapeHtml(data.note || '')}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Recommendations
+  const recList = document.getElementById('recList');
+  const axisNames = {V:'Ver', A:'Activar', D:'Decidir', O:'Operar'};
+  recList.innerHTML = (r.recommendations || []).map((rec, i) => `
+    <div class="rec-item">
+      <div class="rec-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="rec-body">
+        <div class="rec-axis">Eje ${rec.axis} · ${axisNames[rec.axis] || '—'}</div>
+        <div class="rec-title">${escapeHtml(rec.title)}</div>
+        <div class="rec-desc">${sanitizeDesc(rec.description)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s){
+  if(!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// allow <strong> tags in descriptions, escape everything else
+function sanitizeDesc(s){
+  if(!s) return '';
+  const escaped = escapeHtml(s);
+  return escaped.replace(/&lt;strong&gt;/g,'<strong>').replace(/&lt;\/strong&gt;/g,'</strong>');
+}
+
+</script>
+</body>
+</html>

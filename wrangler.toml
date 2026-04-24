@@ -1,0 +1,19 @@
+name = "vado-evaluator"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# The worker will be published to:
+#   https://vado-evaluator.<your-subdomain>.workers.dev
+#
+# Your subdomain is fixed per Cloudflare account.
+# For your account (jfrubiano), the final URL will be:
+#   https://vado-evaluator.jfrubiano.workers.dev
+#
+# Set the API key as a secret BEFORE deploying:
+#   wrangler secret put ANTHROPIC_API_KEY
+#
+# To deploy:
+#   wrangler deploy
+#
+# To see logs in real time:
+#   wrangler tail
