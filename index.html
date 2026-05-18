@@ -1105,6 +1105,7 @@ Reglas obligatorias:
 - Para ekman_emotions: estima qué emociones universales (Ekman) probablemente experimenta el espectador al exponerse al estímulo. Los 6 porcentajes NO deben sumar 100 (pueden coexistir varias emociones). Cada valor representa la intensidad esperada de esa emoción específica.
 - dominant_emotion debe ser la de mayor valor en ekman_emotions.
 - Para neural_activation.elements: lista 2 o 3 elementos CONCRETOS y específicos del estímulo analizado (no genéricos) que activan ese lóbulo. Ejemplos buenos: "El rostro sonriente de la madre en primer plano", "La frase 'el que ha usado tu papá toda la vida' activa memoria autobiográfica", "El contraste del rojo del logo sobre fondo blanco". Ejemplos malos (genéricos, prohibidos): "el uso de colores", "la narrativa emocional", "los personajes humanos". Si el lóbulo está 'off' (sin activar), el array elements debe estar vacío [].
+- IMPORTANTE: dentro de los strings del JSON, NUNCA uses comillas dobles ("). Si necesitas citar texto del estímulo, usa comillas simples ('). Si necesitas mencionar una marca o frase, usa comillas simples o paréntesis. Las comillas dobles solo pueden ser delimitadores del JSON, jamás dentro del contenido.
 - SOLO JSON. Sin texto antes o después. Sin backticks. Sin markdown.`;
 
 async function evaluateStimulus(input, audience){
@@ -1193,11 +1194,27 @@ async function evaluateStimulus(input, audience){
     const lastBrace = candidate.lastIndexOf('}');
     if(firstBrace === -1 || lastBrace === -1) continue;
     const jsonStr = candidate.slice(firstBrace, lastBrace + 1);
+
+    // First attempt: clean parse
     try {
       parsed = JSON.parse(jsonStr);
       break;
     } catch(e){
       lastError = e;
+    }
+
+    // Second attempt: try to repair common issues
+    // The model often produces strings with unescaped double quotes inside
+    // e.g.  "text": "He said "hello""  →  "text": "He said 'hello'"
+    try {
+      // Repair pattern 1: unescaped quotes inside string values
+      // Strategy: walk char by char, only allow quotes that close a value
+      const repaired = repairJsonString(jsonStr);
+      parsed = JSON.parse(repaired);
+      console.warn('Recovered JSON after repair');
+      break;
+    } catch(e2){
+      lastError = e2;
     }
   }
 
@@ -1207,6 +1224,57 @@ async function evaluateStimulus(input, audience){
   }
 
   return parsed;
+}
+
+/* Best-effort JSON repair: replaces unescaped inner quotes with single quotes */
+function repairJsonString(s){
+  // Find string values (after a colon, between double quotes) and replace
+  // unescaped double quotes inside them with single quotes.
+  // This is a naive but effective heuristic for LLM output.
+  let out = '';
+  let i = 0;
+  const n = s.length;
+  while(i < n){
+    const ch = s[i];
+    if(ch === '"'){
+      // Start of a string. Walk until next unescaped " followed by , : } ] or whitespace then any of those
+      out += '"';
+      i++;
+      let strContent = '';
+      while(i < n){
+        const c = s[i];
+        if(c === '\\'){
+          strContent += c + (s[i+1] || '');
+          i += 2;
+          continue;
+        }
+        if(c === '"'){
+          // Look ahead: is this really the end of string?
+          // Skip whitespace and check next non-ws char
+          let j = i+1;
+          while(j < n && /\s/.test(s[j])) j++;
+          const next = s[j];
+          if(next === ',' || next === ':' || next === '}' || next === ']' || j >= n){
+            // End of string
+            out += strContent + '"';
+            i++;
+            break;
+          } else {
+            // Unescaped quote inside string — replace with single quote
+            strContent += "'";
+            i++;
+            continue;
+          }
+        }
+        strContent += c;
+        i++;
+      }
+    } else {
+      out += ch;
+      i++;
+    }
+  }
+  return out;
 }
 
 /* ========== RENDER RESULTS ========== */
