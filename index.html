@@ -472,7 +472,13 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 .lobe-legend-item{
   display:flex;align-items:center;gap:12px;
   padding:10px 12px;border-radius:4px;background:rgba(10,22,40,.5);
-  border-left:3px solid;font-size:12px;line-height:1.3
+  border-left:3px solid;font-size:12px;line-height:1.3;
+  cursor:pointer;transition:all .25s
+}
+.lobe-legend-item:hover{background:rgba(10,22,40,.75);transform:translateX(3px)}
+.lobe-legend-item.selected{
+  background:rgba(228,176,74,.1);
+  box-shadow:inset 0 0 0 1px rgba(228,176,74,.3)
 }
 .lobe-legend-item .ll-dot{
   width:11px;height:11px;border-radius:50%;flex-shrink:0;
@@ -487,6 +493,41 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 .ll-on{background:rgba(94,227,184,.18);color:var(--mint)}
 .ll-partial{background:rgba(255,180,68,.18);color:var(--amber)}
 .ll-off{background:rgba(120,120,120,.15);color:rgba(244,239,230,.4)}
+
+/* LOBE DETAIL PANEL */
+.lobe-detail{
+  margin-top:14px;padding:18px;border-radius:5px;
+  background:linear-gradient(165deg,rgba(228,176,74,.12),rgba(228,176,74,.02));
+  border:1px solid rgba(228,176,74,.25);
+  border-left:3px solid var(--gold);
+  display:none;animation:fadeIn .35s ease
+}
+.lobe-detail.show{display:block}
+.ld-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:8px
+}
+.ld-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;box-shadow:0 0 10px currentColor}
+.ld-name{font-family:'Fraunces',serif;font-size:17px;font-weight:500;line-height:1}
+.ld-status{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:1.2px;text-transform:uppercase;padding:3px 8px;border-radius:2px
+}
+.ld-note{
+  font-size:12.5px;line-height:1.5;color:rgba(244,239,230,.85);
+  margin-bottom:14px;font-style:italic
+}
+.ld-elements-label{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:2px;
+  color:var(--gold);text-transform:uppercase;margin-bottom:8px;
+  display:flex;align-items:center;gap:8px
+}
+.ld-elements-label::before{content:'';width:4px;height:4px;background:var(--gold);border-radius:50%}
+.ld-elements{list-style:none;display:flex;flex-direction:column;gap:6px}
+.ld-elements li{
+  padding:8px 10px;border-radius:3px;background:rgba(10,22,40,.5);
+  font-size:12px;line-height:1.45;color:rgba(244,239,230,.85);
+  border-left:2px solid;padding-left:12px
+}
 
 /* EKMAN SECTION */
 .ekman-wrap{
@@ -794,6 +835,16 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
         <div class="brain-legend">
           <h4>Lóbulos · Estado</h4>
           <div id="brainLegend"></div>
+          <div class="lobe-detail" id="lobeDetail">
+            <div class="ld-head">
+              <div class="ld-dot" id="ldDot"></div>
+              <div class="ld-name" id="ldName">—</div>
+              <div class="ld-status" id="ldStatus">—</div>
+            </div>
+            <div class="ld-note" id="ldNote">—</div>
+            <div class="ld-elements-label">Elementos del estímulo que lo activan</div>
+            <ul class="ld-elements" id="ldElements"></ul>
+          </div>
         </div>
       </div>
     </section>
@@ -1020,11 +1071,11 @@ Para CADA estímulo que analices, devuelve EXCLUSIVAMENTE un JSON válido — si
   "strengths": ["<fortaleza 1>", "<fortaleza 2>", "<fortaleza 3>"],
   "risks": ["<riesgo 1>", "<riesgo 2>", "<riesgo 3>"],
   "neural_activation": {
-    "occipital": {"status": "on|partial|off", "note": "<frase corta>"},
-    "temporal": {"status": "on|partial|off", "note": "<frase corta>"},
-    "limbic": {"status": "on|partial|off", "note": "<frase corta>"},
-    "parietal": {"status": "on|partial|off", "note": "<frase corta>"},
-    "frontal": {"status": "on|partial|off", "note": "<frase corta>"}
+    "occipital": {"status": "on|partial|off", "note": "<frase corta>", "elements": ["<elemento específico del estímulo 1>", "<elemento 2>", "<elemento 3>"]},
+    "temporal": {"status": "on|partial|off", "note": "<frase corta>", "elements": ["...", "...", "..."]},
+    "limbic": {"status": "on|partial|off", "note": "<frase corta>", "elements": ["...", "...", "..."]},
+    "parietal": {"status": "on|partial|off", "note": "<frase corta>", "elements": ["...", "...", "..."]},
+    "frontal": {"status": "on|partial|off", "note": "<frase corta>", "elements": ["...", "...", "..."]}
   },
   "ekman_emotions": {
     "joy": <0-100>,
@@ -1053,6 +1104,7 @@ Reglas obligatorias:
 - Si usas la herramienta de búsqueda web para leer una URL, DESPUÉS de recibir los resultados escribe ÚNICAMENTE el JSON final. No escribas texto explicativo antes ni después del JSON.
 - Para ekman_emotions: estima qué emociones universales (Ekman) probablemente experimenta el espectador al exponerse al estímulo. Los 6 porcentajes NO deben sumar 100 (pueden coexistir varias emociones). Cada valor representa la intensidad esperada de esa emoción específica.
 - dominant_emotion debe ser la de mayor valor en ekman_emotions.
+- Para neural_activation.elements: lista 2 o 3 elementos CONCRETOS y específicos del estímulo analizado (no genéricos) que activan ese lóbulo. Ejemplos buenos: "El rostro sonriente de la madre en primer plano", "La frase 'el que ha usado tu papá toda la vida' activa memoria autobiográfica", "El contraste del rojo del logo sobre fondo blanco". Ejemplos malos (genéricos, prohibidos): "el uso de colores", "la narrativa emocional", "los personajes humanos". Si el lóbulo está 'off' (sin activar), el array elements debe estar vacío [].
 - SOLO JSON. Sin texto antes o después. Sin backticks. Sin markdown.`;
 
 async function evaluateStimulus(input, audience){
@@ -1290,21 +1342,82 @@ const LOBE_NAMES = {
 };
 const STATUS_LABELS = {on:'Activado', partial:'Parcial', off:'Sin activar'};
 
+let currentActivation = null;
+let selectedLobe = null;
+
 function renderBrainLegend(activation){
   const wrap = document.getElementById('brainLegend');
   if(!wrap) return;
+  currentActivation = activation;
+  selectedLobe = null;
+  hideLobeDetail();
+
   const order = ['frontal','parietal','temporal','occipital','limbic'];
   wrap.innerHTML = order.map(key => {
-    const data = activation[key] || {status:'off', note:''};
+    const data = activation[key] || {status:'off', note:'', elements:[]};
     const colorHex = '#' + LOBE_COLORS[key].toString(16).padStart(6,'0');
     return `
-      <div class="lobe-legend-item" style="border-left-color:${colorHex}">
+      <div class="lobe-legend-item" style="border-left-color:${colorHex}" data-lobe="${key}">
         <div class="ll-dot" style="background:${colorHex};color:${colorHex}"></div>
         <div class="ll-name">${LOBE_NAMES[key]}</div>
         <div class="ll-state ll-${data.status}">${STATUS_LABELS[data.status]||'—'}</div>
       </div>
     `;
   }).join('');
+
+  // Wire clicks
+  wrap.querySelectorAll('.lobe-legend-item').forEach(el => {
+    el.addEventListener('click', ()=>{
+      const lobeKey = el.dataset.lobe;
+      selectLobe(lobeKey);
+    });
+  });
+}
+
+function selectLobe(lobeKey){
+  if(!currentActivation) return;
+  const data = currentActivation[lobeKey];
+  if(!data) return;
+
+  // Update legend item visual state
+  document.querySelectorAll('.lobe-legend-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.lobe === lobeKey);
+  });
+
+  // Show detail panel
+  const panel = document.getElementById('lobeDetail');
+  const colorHex = '#' + LOBE_COLORS[lobeKey].toString(16).padStart(6,'0');
+  document.getElementById('ldDot').style.background = colorHex;
+  document.getElementById('ldDot').style.color = colorHex;
+  document.getElementById('ldName').textContent = LOBE_NAMES[lobeKey];
+  const statusEl = document.getElementById('ldStatus');
+  statusEl.textContent = STATUS_LABELS[data.status] || '—';
+  statusEl.className = 'ld-status ll-' + data.status;
+  document.getElementById('ldNote').textContent = '"' + (data.note || '—') + '"';
+
+  const elementsList = document.getElementById('ldElements');
+  const elements = data.elements || [];
+  if(elements.length > 0){
+    elementsList.innerHTML = elements.map(e => `<li style="border-left-color:${colorHex}">${escapeHtml(e)}</li>`).join('');
+    elementsList.style.display = '';
+    document.querySelector('.ld-elements-label').style.display = '';
+  } else {
+    elementsList.innerHTML = `<li style="border-left-color:${colorHex};color:rgba(244,239,230,.5);font-style:italic">Este lóbulo no se activa significativamente con este estímulo.</li>`;
+    elementsList.style.display = '';
+  }
+
+  panel.classList.add('show');
+  selectedLobe = lobeKey;
+
+  // Briefly highlight the lobe in the 3D brain via a pulse
+  if(brainScene && brainScene.highlightLobe){
+    brainScene.highlightLobe(lobeKey);
+  }
+}
+
+function hideLobeDetail(){
+  const panel = document.getElementById('lobeDetail');
+  if(panel) panel.classList.remove('show');
 }
 
 function renderBrain3D(activation){
@@ -1323,16 +1436,33 @@ function renderBrain3D(activation){
   const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
 
   function resize(){
-    const w = canvas.parentElement.clientWidth;
-    const h = canvas.parentElement.clientHeight;
+    const w = canvas.parentElement.clientWidth || 1;
+    const h = canvas.parentElement.clientHeight || 1;
+    if(w < 2 || h < 2) return false;
     renderer.setSize(w, h, false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     camera.aspect = w/h;
     camera.updateProjectionMatrix();
+    return true;
   }
   resize();
   const resizeHandler = ()=>resize();
   window.addEventListener('resize', resizeHandler);
+
+  // Watch parent container — re-render when it becomes visible/changes size
+  let brainResizeObserver = null;
+  if(typeof ResizeObserver !== 'undefined'){
+    brainResizeObserver = new ResizeObserver(()=>resize());
+    brainResizeObserver.observe(canvas.parentElement);
+  }
+
+  // Fallback: retry resize a few times in case canvas takes a moment to mount
+  let retries = 0;
+  const retryResize = ()=>{
+    if(retries++ > 8) return;
+    if(!resize()) setTimeout(retryResize, 120);
+  };
+  setTimeout(retryResize, 60);
 
   scene.add(new THREE.AmbientLight(0x2a3450, .6));
   const key = new THREE.DirectionalLight(0xffffff, .7);
@@ -1417,6 +1547,11 @@ function renderBrain3D(activation){
     if(status === 'partial') return 0.25 + pulse * 0.2;
     return 0.04;
   }
+
+  // Variables for click highlight
+  let highlightedLobe = null;
+  let highlightTimer = null;
+
   function updateColors(activation, pulse){
     [leftGeom, rightGeom].forEach(g => {
       const col = g.attributes.color.array;
@@ -1425,7 +1560,11 @@ function renderBrain3D(activation){
       for(let i=0;i<count;i++){
         const lobeName = lobeOrder[idxArr[i]] || 'frontal';
         const data = activation[lobeName] || {status:'off'};
-        const intensity = getIntensity(data.status, pulse);
+        let intensity = getIntensity(data.status, pulse);
+        // Extra boost if this lobe is currently selected/highlighted
+        if(highlightedLobe === lobeName){
+          intensity = Math.min(1.4, intensity + 0.4 + pulse * 0.3);
+        }
         if(intensity > 0.1){
           const [r,gg,b] = colorHexToRgb(LOBE_COLORS[lobeName]);
           col[i*3]   = r * intensity * 1.4 + 0.08;
@@ -1547,11 +1686,72 @@ function renderBrain3D(activation){
       stopped = true;
       window.removeEventListener('resize', resizeHandler);
       canvas.removeEventListener('pointerdown', onDown);
+      canvas.removeEventListener('click', onClick);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointermove', onMove);
+      if(brainResizeObserver) brainResizeObserver.disconnect();
+      if(highlightTimer) clearTimeout(highlightTimer);
       renderer.dispose();
+    },
+    highlightLobe: (key)=>{
+      highlightedLobe = key;
+      if(highlightTimer) clearTimeout(highlightTimer);
+      highlightTimer = setTimeout(()=>{ highlightedLobe = null; }, 2400);
     }
   };
+
+  // Click on the 3D brain → detect which lobe was hit (raycaster)
+  const raycaster = new THREE.Raycaster();
+  const mouseVec = new THREE.Vector2();
+  let mouseDownPos = null;
+
+  function onClick(e){
+    // Distinguish click from drag — only fire on small movements
+    if(mouseDownPos){
+      const dx = Math.abs(e.clientX - mouseDownPos.x);
+      const dy = Math.abs(e.clientY - mouseDownPos.y);
+      if(dx > 5 || dy > 5){ mouseDownPos = null; return; }
+    }
+    mouseDownPos = null;
+
+    const rect = canvas.getBoundingClientRect();
+    mouseVec.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouseVec.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouseVec, camera);
+
+    // Check intersection with hemispheres
+    const hits = raycaster.intersectObjects([leftHemi, rightHemi]);
+    if(hits.length === 0) return;
+
+    const hit = hits[0];
+    // Look up the lobe at the closest vertex
+    const idxArr = hit.object.geometry.attributes.lobeIdx.array;
+    const face = hit.face;
+    // Use the vertex closest to hit point — pick first index
+    const lobeIdxValue = idxArr[face.a];
+    const lobeName = lobeOrder[lobeIdxValue] || 'frontal';
+
+    // Also check distance to limbic (inside the brain)
+    // Simple heuristic: if hit is near center, treat as limbic
+    if(Math.abs(hit.point.x) < 0.7 && hit.point.y < 0.0 && hit.point.z > -0.3){
+      // Check if limbic is active
+      if(currentActivation && currentActivation.limbic && currentActivation.limbic.status !== 'off'){
+        selectLobe('limbic');
+        return;
+      }
+    }
+    selectLobe(lobeName);
+  }
+  canvas.addEventListener('click', onClick);
+
+  // Override existing onDown to track for click vs drag
+  const originalOnDown = onDown;
+  canvas.removeEventListener('pointerdown', onDown);
+  const newOnDown = (e)=>{
+    mouseDownPos = {x:e.clientX, y:e.clientY};
+    originalOnDown(e);
+  };
+  canvas.addEventListener('pointerdown', newOnDown);
 }
 
 /* ============================================================
@@ -1647,16 +1847,31 @@ function buildEkmanFace(def, intensity){
   const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
 
   function resize(){
-    const w = canvas.parentElement.clientWidth;
-    const h = canvas.parentElement.clientHeight;
+    const w = canvas.parentElement.clientWidth || 1;
+    const h = canvas.parentElement.clientHeight || 1;
+    if(w < 2 || h < 2) return false;
     renderer.setSize(w, h, false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     camera.aspect = w/h;
     camera.updateProjectionMatrix();
+    return true;
   }
   resize();
   const resizeHandler = ()=>resize();
   window.addEventListener('resize', resizeHandler);
+
+  let faceResizeObserver = null;
+  if(typeof ResizeObserver !== 'undefined'){
+    faceResizeObserver = new ResizeObserver(()=>resize());
+    faceResizeObserver.observe(canvas.parentElement);
+  }
+
+  let faceRetries = 0;
+  const faceRetryResize = ()=>{
+    if(faceRetries++ > 8) return;
+    if(!resize()) setTimeout(faceRetryResize, 120);
+  };
+  setTimeout(faceRetryResize, 60);
 
   scene.add(new THREE.AmbientLight(0x2a3450, .8));
   const light = new THREE.DirectionalLight(0xffffff, .8);
@@ -1897,6 +2112,7 @@ function buildEkmanFace(def, intensity){
     dispose: ()=>{
       stopped = true;
       window.removeEventListener('resize', resizeHandler);
+      if(faceResizeObserver) faceResizeObserver.disconnect();
       renderer.dispose();
     }
   };
