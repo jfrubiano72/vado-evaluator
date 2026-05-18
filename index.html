@@ -1713,121 +1713,147 @@ function buildEkmanFace(def, intensity){
 
   switch(def.key){
     case 'joy':
-      // Wide eyes, slight squint, big smile
+      // Wide eyes, slight squint from cheek raise, BIG SMILE curving UP
       leftEye.position.set(-eyeX, eyeY-0.02, eyeZ);
       rightEye.position.set(eyeX, eyeY-0.02, eyeZ);
-      leftEye.scale.y = 0.7;
-      rightEye.scale.y = 0.7;
+      leftEye.scale.y = 0.65;
+      rightEye.scale.y = 0.65;
       leftBrow.position.set(-eyeX, eyeY+0.28, eyeZ);
       rightBrow.position.set(eyeX, eyeY+0.28, eyeZ);
-      leftBrow.rotation.z = 0.12;
-      rightBrow.rotation.z = -0.12;
-      // Smile — curved up
+      leftBrow.rotation.z = 0.08;   // slight relaxed lift
+      rightBrow.rotation.z = -0.08;
+      // Smile — U shape (extremos arriba, centro abajo)
       {
-        const curve = new THREE.EllipseCurve(0, -0.32, 0.42, 0.18, Math.PI, 2*Math.PI, false, 0);
-        const pts = curve.getPoints(20).map(p => new THREE.Vector3(p.x, -p.y, 0.95));
-        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.05, 8);
+        // Build U-shape using points: extremos en y_alto, centro en y_bajo
+        const pts = [];
+        for(let i=0; i<=20; i++){
+          const t = i/20;          // 0 a 1
+          const x = -0.35 + t*0.7; // de -0.35 a 0.35
+          // parabola: y = -0.5 * (1 - 4*(t-0.5)^2)   => centro bajo, extremos altos
+          const y = -0.32 - 0.18 * (1 - 4*(t-0.5)*(t-0.5));
+          pts.push(new THREE.Vector3(x, y, 0.95));
+        }
+        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.055, 8);
         mouth = new THREE.Mesh(mGeom, mouthMat);
       }
       break;
 
     case 'sadness':
-      // Droopy eyes, brows angled up in middle, mouth curved down
+      // Droopy eyes, brows con parte INTERNA SUBIDA (signo de tristeza/preocupación), mouth ∩ shape
       leftEye.position.set(-eyeX, eyeY-0.05, eyeZ);
       rightEye.position.set(eyeX, eyeY-0.05, eyeZ);
-      leftBrow.position.set(-eyeX, eyeY+0.22, eyeZ);
-      rightBrow.position.set(eyeX, eyeY+0.22, eyeZ);
-      leftBrow.rotation.z = -0.35; // inner corner up
-      rightBrow.rotation.z = 0.35;
+      leftEye.scale.y = 0.85;
+      rightEye.scale.y = 0.85;
+      leftBrow.position.set(-eyeX, eyeY+0.20, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.20, eyeZ);
+      // Inner brow UP: izquierda gira en sentido horario (negativo) para subir su extremo derecho (interno)
+      leftBrow.rotation.z = 0.30;   // extremo derecho (interno) sube
+      rightBrow.rotation.z = -0.30; // extremo izquierdo (interno) sube
+      // Frown — ∩ shape (extremos abajo, centro arriba)
       {
-        const curve = new THREE.EllipseCurve(0, -0.45, 0.38, 0.15, 0, Math.PI, false, 0);
-        const pts = curve.getPoints(20).map(p => new THREE.Vector3(p.x, -p.y - 0.05, 0.95));
-        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.045, 8);
+        const pts = [];
+        for(let i=0; i<=20; i++){
+          const t = i/20;
+          const x = -0.30 + t*0.60;
+          // ∩: extremos bajos, centro alto
+          const y = -0.48 + 0.12 * (1 - 4*(t-0.5)*(t-0.5));
+          pts.push(new THREE.Vector3(x, y, 0.95));
+        }
+        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.045, 8);
         mouth = new THREE.Mesh(mGeom, mouthMat);
       }
       break;
 
     case 'anger':
-      // Narrowed eyes, brows angled down toward middle, tight mouth
-      leftEye.position.set(-eyeX, eyeY, eyeZ);
-      rightEye.position.set(eyeX, eyeY, eyeZ);
-      leftEye.scale.y = 0.55;
-      rightEye.scale.y = 0.55;
-      leftBrow.position.set(-eyeX*0.9, eyeY+0.22, eyeZ);
-      rightBrow.position.set(eyeX*0.9, eyeY+0.22, eyeZ);
-      leftBrow.rotation.z = 0.45; // inner corner DOWN (angry V)
-      rightBrow.rotation.z = -0.45;
-      leftBrow.scale.set(1, 1.2, 1);
-      rightBrow.scale.set(1, 1.2, 1);
-      // Tight straight mouth
+      // Narrowed eyes, brows V (parte INTERNA BAJADA), tight mouth
+      leftEye.position.set(-eyeX, eyeY-0.02, eyeZ);
+      rightEye.position.set(eyeX, eyeY-0.02, eyeZ);
+      leftEye.scale.y = 0.50;
+      rightEye.scale.y = 0.50;
+      leftBrow.position.set(-eyeX*0.95, eyeY+0.20, eyeZ);
+      rightBrow.position.set(eyeX*0.95, eyeY+0.20, eyeZ);
+      // V shape — INNER corner DOWN: opposite signs to sadness
+      leftBrow.rotation.z = -0.42;  // extremo derecho (interno) baja
+      rightBrow.rotation.z = 0.42;  // extremo izquierdo (interno) baja
+      leftBrow.scale.set(1, 1.3, 1);
+      rightBrow.scale.set(1, 1.3, 1);
+      // Tight downturned mouth
       {
-        const mGeom = new THREE.BoxGeometry(0.55, 0.06, 0.05);
+        const pts = [];
+        for(let i=0; i<=20; i++){
+          const t = i/20;
+          const x = -0.28 + t*0.56;
+          const y = -0.40 - 0.04 * (1 - 4*(t-0.5)*(t-0.5));
+          pts.push(new THREE.Vector3(x, y, 0.95));
+        }
+        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 22, 0.05, 8);
         mouth = new THREE.Mesh(mGeom, mouthMat);
-        mouth.position.set(0, -0.38, 0.95);
       }
       break;
 
     case 'fear':
-      // Wide eyes (full circles, large), high brows, oval mouth
+      // Wide eyes (full circles, larger), HIGH brows, oval gasping mouth
       leftEye.position.set(-eyeX, eyeY-0.02, eyeZ);
       rightEye.position.set(eyeX, eyeY-0.02, eyeZ);
-      leftEye.scale.set(1.3, 1.3, 1);
-      rightEye.scale.set(1.3, 1.3, 1);
-      leftBrow.position.set(-eyeX, eyeY+0.36, eyeZ);
-      rightBrow.position.set(eyeX, eyeY+0.36, eyeZ);
-      leftBrow.rotation.z = -0.15;
-      rightBrow.rotation.z = 0.15;
-      // Open oval mouth (gasping)
+      leftEye.scale.set(1.25, 1.25, 1);
+      rightEye.scale.set(1.25, 1.25, 1);
+      leftBrow.position.set(-eyeX, eyeY+0.38, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.38, eyeZ);
+      // Fear brows: slight inner-up tilt (like sadness but higher) + raised
+      leftBrow.rotation.z = 0.18;
+      rightBrow.rotation.z = -0.18;
+      // Vertical oval (gasping mouth — taller than wide)
       {
-        const mGeom = new THREE.TorusGeometry(0.16, 0.06, 12, 24);
+        const mGeom = new THREE.TorusGeometry(0.12, 0.05, 12, 24);
         mouth = new THREE.Mesh(mGeom, mouthMat);
         mouth.position.set(0, -0.42, 0.95);
-        mouth.scale.set(0.85, 1.3, 1);
+        mouth.scale.set(0.8, 1.4, 1);
       }
       break;
 
     case 'disgust':
-      // Squint, raised brow on one side, asymmetric mouth (curled lip)
+      // Asymmetric: squint + one brow raised + curled lip + nose wrinkle
       leftEye.position.set(-eyeX, eyeY, eyeZ);
       rightEye.position.set(eyeX, eyeY, eyeZ);
-      leftEye.scale.y = 0.65;
-      rightEye.scale.y = 0.65;
-      leftBrow.position.set(-eyeX, eyeY+0.24, eyeZ);
-      rightBrow.position.set(eyeX, eyeY+0.30, eyeZ); // one raised
-      leftBrow.rotation.z = 0.18;
-      rightBrow.rotation.z = -0.05;
-      // Asymmetric mouth — curled up on one side
+      leftEye.scale.y = 0.55;
+      rightEye.scale.y = 0.55;
+      leftBrow.position.set(-eyeX, eyeY+0.32, eyeZ);    // raised eyebrow (left)
+      rightBrow.position.set(eyeX, eyeY+0.20, eyeZ);    // lower eyebrow (right)
+      leftBrow.rotation.z = -0.10;
+      rightBrow.rotation.z = 0.22;                       // right brow angles down (disapproval)
+      // Asymmetric curled-lip mouth (corner raised on one side)
       {
-        const curve = new THREE.QuadraticBezierCurve3(
+        const pts = [
           new THREE.Vector3(-0.28, -0.42, 0.95),
-          new THREE.Vector3(0, -0.32, 0.95),
-          new THREE.Vector3(0.28, -0.30, 0.95)
-        );
-        const mGeom = new THREE.TubeGeometry(curve, 18, 0.05, 8);
+          new THREE.Vector3(-0.05, -0.38, 0.95),
+          new THREE.Vector3(0.10,  -0.28, 0.95),
+          new THREE.Vector3(0.25,  -0.20, 0.95)
+        ];
+        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 22, 0.05, 8);
         mouth = new THREE.Mesh(mGeom, mouthMat);
       }
       // Nose wrinkle hint
-      const noseGeom = new THREE.SphereGeometry(0.06, 12, 8);
+      const noseGeom = new THREE.SphereGeometry(0.05, 12, 8);
       const nose1 = new THREE.Mesh(noseGeom, browMat);
-      nose1.position.set(-0.08, -0.05, 0.97);
+      nose1.position.set(-0.07, -0.04, 0.97);
       const nose2 = new THREE.Mesh(noseGeom, browMat);
-      nose2.position.set(0.08, -0.05, 0.97);
+      nose2.position.set(0.07, -0.04, 0.97);
       group.add(nose1, nose2);
       break;
 
     case 'surprise':
-      // Huge round eyes, high brows, round 'O' mouth
+      // Very wide round eyes, HIGH brows, perfect circular 'O' mouth
       leftEye.position.set(-eyeX, eyeY-0.02, eyeZ);
       rightEye.position.set(eyeX, eyeY-0.02, eyeZ);
       leftEye.scale.set(1.4, 1.4, 1);
       rightEye.scale.set(1.4, 1.4, 1);
-      leftBrow.position.set(-eyeX, eyeY+0.38, eyeZ);
-      rightBrow.position.set(eyeX, eyeY+0.38, eyeZ);
-      leftBrow.rotation.z = -0.05;
-      rightBrow.rotation.z = 0.05;
-      // Round O mouth
+      leftBrow.position.set(-eyeX, eyeY+0.40, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.40, eyeZ);
+      leftBrow.rotation.z = -0.04;  // basically straight, slightly arched
+      rightBrow.rotation.z = 0.04;
+      // Perfectly round O mouth
       {
-        const mGeom = new THREE.TorusGeometry(0.13, 0.05, 12, 24);
+        const mGeom = new THREE.TorusGeometry(0.14, 0.05, 12, 24);
         mouth = new THREE.Mesh(mGeom, mouthMat);
         mouth.position.set(0, -0.42, 0.95);
       }
