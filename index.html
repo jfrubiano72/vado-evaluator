@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VADO Evaluator · Behavioral Intelligence Lab</title>
+<title>Neuro-VADO · Evaluador de neuromarketing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -616,9 +616,268 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
   .neural-map{grid-template-columns:1fr 1fr;overflow-x:hidden}
   h1{font-size:40px}
 }
+/* ============================================================
+   ACCESS MODAL · Book-gated entry
+   ============================================================ */
+.access-overlay{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse at center, rgba(15,31,58,.97), rgba(10,22,40,.99));
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;padding:20px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  animation:fadeIn .5s ease
+}
+.access-overlay.hidden{display:none}
+.access-modal{
+  width:100%;max-width:540px;
+  background:linear-gradient(165deg, rgba(20,40,71,.95), rgba(15,31,58,.95));
+  border:1px solid rgba(228,176,74,.25);
+  border-radius:8px;padding:36px 38px;
+  position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 80px rgba(228,176,74,.08)
+}
+.access-modal::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent)
+}
+.access-brand{
+  display:flex;align-items:center;gap:10px;margin-bottom:22px
+}
+.access-brand-mark{
+  width:32px;height:32px;border-radius:4px;
+  background:linear-gradient(135deg, var(--gold), var(--teal));
+  position:relative
+}
+.access-brand-mark::after{
+  content:'V';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--ink)
+}
+.access-brand-text{flex:1}
+.access-brand-t1{
+  font-family:'Fraunces',serif;font-size:17px;font-weight:500;line-height:1
+}
+.access-brand-t2{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--teal);margin-top:3px
+}
+
+.access-title{
+  font-family:'Fraunces',serif;font-size:24px;font-weight:400;line-height:1.2;
+  margin-bottom:12px
+}
+.access-title em{font-style:italic;color:var(--gold);font-weight:500}
+.access-desc{
+  font-size:13.5px;line-height:1.55;color:rgba(244,239,230,.78);
+  margin-bottom:6px;font-weight:300
+}
+.access-hint{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:1px;color:rgba(244,239,230,.45);
+  margin-bottom:22px;font-style:italic
+}
+
+.access-question{
+  padding:18px 20px;border-radius:5px;
+  background:rgba(10,22,40,.5);
+  border:1px solid rgba(228,176,74,.18);
+  margin-bottom:18px
+}
+.access-q-label{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  letter-spacing:2px;color:var(--teal);text-transform:uppercase;
+  margin-bottom:8px
+}
+.access-q-text{
+  font-family:'Fraunces',serif;font-size:17px;font-weight:400;line-height:1.4;font-style:italic
+}
+.access-q-text strong{
+  font-weight:600;color:var(--gold);font-style:normal;
+  font-family:'JetBrains Mono',monospace;font-size:18px;
+  padding:2px 8px;background:rgba(228,176,74,.12);border-radius:3px;margin:0 3px
+}
+
+.access-input{
+  width:100%;padding:14px 16px;
+  background:rgba(10,22,40,.7);
+  border:1px solid rgba(228,176,74,.25);
+  border-radius:5px;color:var(--paper);
+  font-family:'Inter Tight', sans-serif;font-size:14.5px;
+  outline:none;transition:all .25s;
+  margin-bottom:14px
+}
+.access-input:focus{
+  border-color:var(--gold);background:rgba(10,22,40,.9);
+  box-shadow:0 0 0 3px rgba(228,176,74,.1)
+}
+.access-input.error{
+  border-color:#FF5555;background:rgba(255,85,85,.04);
+  animation:shake .35s ease
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+
+.access-feedback{
+  font-size:12px;line-height:1.5;
+  padding:10px 14px;border-radius:4px;
+  margin-bottom:14px;display:none
+}
+.access-feedback.show{display:block}
+.access-feedback.error{
+  background:rgba(255,85,85,.1);
+  border-left:3px solid #FF5555;
+  color:#FF8888
+}
+.access-feedback.locked{
+  background:rgba(255,85,85,.15);
+  border-left:3px solid #FF5555;
+  color:#FFAAAA
+}
+
+.access-actions{
+  display:flex;gap:10px;margin-bottom:24px
+}
+.access-btn{
+  flex:1;padding:13px 18px;border-radius:4px;
+  border:1px solid;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  transition:all .25s;font-weight:500
+}
+.access-btn-primary{
+  background:var(--gold);color:var(--ink);
+  border-color:var(--gold)
+}
+.access-btn-primary:hover{
+  background:#F4C56A;transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(228,176,74,.3)
+}
+.access-btn-primary:disabled{
+  opacity:.5;cursor:not-allowed;transform:none;box-shadow:none
+}
+
+.access-divider{
+  display:flex;align-items:center;gap:14px;
+  margin:22px 0;color:rgba(244,239,230,.35);
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px
+}
+.access-divider::before, .access-divider::after{
+  content:'';flex:1;height:1px;background:rgba(244,239,230,.15)
+}
+
+.access-buy-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;
+  color:rgba(244,239,230,.55);text-transform:uppercase;
+  margin-bottom:10px;text-align:center
+}
+.access-buy-btns{
+  display:flex;flex-direction:column;gap:8px
+}
+.access-buy-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:12px 18px;border-radius:4px;
+  text-decoration:none;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  transition:all .25s;font-weight:500
+}
+.access-buy-amazon{
+  background:linear-gradient(135deg, #FF9900, #FF6B00);
+  color:#FFFFFF;border:1px solid rgba(255,153,0,.4)
+}
+.access-buy-amazon:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(255,153,0,.25)
+}
+.access-buy-web{
+  background:transparent;color:var(--teal);
+  border:1px solid rgba(0,184,196,.4)
+}
+.access-buy-web:hover{
+  background:rgba(0,184,196,.08);
+  border-color:var(--teal)
+}
+
+.access-attempts{
+  display:flex;justify-content:center;gap:6px;margin-bottom:14px
+}
+.access-attempt-dot{
+  width:9px;height:9px;border-radius:50%;
+  background:rgba(94,227,184,.4);
+  transition:all .3s
+}
+.access-attempt-dot.used{
+  background:#FF5555;box-shadow:0 0 8px rgba(255,85,85,.5)
+}
+
+.access-footer-text{
+  text-align:center;font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:1.5px;color:rgba(244,239,230,.4);
+  margin-top:10px;text-transform:uppercase
+}
+
+@media(max-width:560px){
+  .access-modal{padding:28px 24px}
+  .access-title{font-size:21px}
+  .access-actions{flex-direction:column}
+}
+
 </style>
 </head>
 <body>
+
+<!-- ACCESS MODAL · Book-gated entry -->
+<div class="access-overlay" id="accessOverlay">
+  <div class="access-modal">
+    <div class="access-brand">
+      <div class="access-brand-mark"></div>
+      <div class="access-brand-text">
+        <div class="access-brand-t1">Neuro-VADO</div>
+        <div class="access-brand-t2">Acceso a la app</div>
+      </div>
+    </div>
+
+    <h2 class="access-title">Acceso para <em>lectores del libro</em></h2>
+    <p class="access-desc">Esta app es una herramienta complementaria del libro <em>Neuromarketing: descifrando la mente del consumidor</em> de Javier Fernando Rubiano. Para acceder, demuestra que tienes el libro.</p>
+
+    <div class="access-question">
+      <div class="access-q-label">◆ Pregunta de validación</div>
+      <div class="access-q-text" id="accessQText">Escribe la primera palabra (puede ser de pocas letras) de la página <strong id="accessPage">—</strong>. No importan tildes ni mayúsculas.</div>
+    </div>
+
+    <input type="text" class="access-input" id="accessInput" placeholder="Escribe tu respuesta aquí..." autocomplete="off" spellcheck="false">
+
+    <div class="access-attempts" id="accessAttempts">
+      <div class="access-attempt-dot"></div>
+      <div class="access-attempt-dot"></div>
+      <div class="access-attempt-dot"></div>
+    </div>
+
+    <div class="access-feedback" id="accessFeedback"></div>
+
+    <div class="access-actions">
+      <button class="access-btn access-btn-primary" id="accessSubmit">Validar →</button>
+    </div>
+
+    <div class="access-divider">¿NO TIENES EL LIBRO?</div>
+
+    <div class="access-buy-label">Adquiérelo aquí</div>
+    <div class="access-buy-btns">
+      <a href="https://www.amazon.com/-/es/Javier-Rubiano-ebook/dp/B0GZYMJ94K/" target="_blank" rel="noopener" class="access-buy-btn access-buy-amazon">
+        ◆ Comprar en Amazon · Kindle
+      </a>
+      <a href="https://javierrubiano.com" target="_blank" rel="noopener" class="access-buy-btn access-buy-web">
+        ◉ Visitar javierrubiano.com
+      </a>
+    </div>
+
+    <div class="access-footer-text">Neuro-VADO · Javier Fernando Rubiano</div>
+  </div>
+</div>
 
 <div class="shell">
 
@@ -627,14 +886,14 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
     <div class="brand">
       <div class="brand-mark"></div>
       <div class="brand-text">
-        <div class="t1">VADO Evaluator</div>
-        <div class="t2">Behavioral Intelligence Lab</div>
+        <div class="t1">Neuro-VADO</div>
+        <div class="t2">Evaluador de neuromarketing</div>
       </div>
     </div>
     <div class="header-meta">
       <div>NEUROMARKETING · <span class="v">v 1.0</span></div>
-      <div>Javier Rubiano · Universidad de La Salle</div>
-      <div style="margin-top:4px;font-size:9px">Cátedra de Neuromarketing · Posgrado</div>
+      <div>Javier Fernando Rubiano</div>
+      <div style="margin-top:4px;font-size:9px">Autor · framework VADO</div>
     </div>
   </header>
 
@@ -875,7 +1134,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 
   <footer class="footer">
     <div>◆ VADO = VER · ACTIVAR · DECIDIR · OPERAR</div>
-    <div>BEHAVIORAL INTELLIGENCE LAB · VISORIA INTELLIGENCE</div>
+    <div>Neuro-VADO · Javier Fernando Rubiano</div>
   </footer>
 
 </div>
@@ -904,6 +1163,244 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 </div>
 
 <script>
+/* ============================================================
+   ACCESS GATE · Book-validation modal
+   ============================================================ */
+const ACCESS_STORAGE_KEY = 'vado_access_v1';
+const ACCESS_LOCKOUT_KEY = 'vado_lockout_v1';
+const ACCESS_ATTEMPTS_KEY = 'vado_attempts_v1';
+const ACCESS_VALID_DAYS = 30;
+const LOCKOUT_MINUTES = 15;
+const MAX_ATTEMPTS = 3;
+
+// Page → first word dictionary
+const BOOK_PAGES = {
+  12: 'privilegio',
+  28: 'basandonos',
+  45: 'priming',
+  67: 'el',
+  72: 'medidas',
+  89: 'hacia',
+  103: 'su',
+  128: 'se',
+  145: 'cognicion',
+  178: 'how'
+};
+const PAGE_NUMBERS = Object.keys(BOOK_PAGES).map(n => parseInt(n,10));
+
+// Temporary master key — valid until May 22, 2026 23:59 Colombia (UTC-5) = May 23, 2026 04:59 UTC
+const TEMP_KEY = 'aplicado';
+const TEMP_KEY_EXPIRES_UTC = new Date('2026-05-23T04:59:00Z');
+
+// Permanent master key — never expires (autor)
+const MASTER_KEY = 'espinosa';
+
+// Normalize input: lowercase, strip accents, trim
+function normalizeWord(s){
+  if(!s) return '';
+  return s.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')  // strip combining diacritics
+    .replace(/[^a-z0-9]/g, '')         // strip punctuation/spaces
+    .trim();
+}
+
+function hasValidAccess(){
+  try {
+    const raw = localStorage.getItem(ACCESS_STORAGE_KEY);
+    if(!raw) return false;
+    const data = JSON.parse(raw);
+    if(!data.expiresAt) return false;
+    return Date.now() < data.expiresAt;
+  } catch(e){ return false; }
+}
+
+function grantAccess(){
+  const expiresAt = Date.now() + (ACCESS_VALID_DAYS * 24 * 60 * 60 * 1000);
+  localStorage.setItem(ACCESS_STORAGE_KEY, JSON.stringify({expiresAt}));
+  localStorage.removeItem(ACCESS_ATTEMPTS_KEY);
+  localStorage.removeItem(ACCESS_LOCKOUT_KEY);
+}
+
+function getLockoutRemainingMs(){
+  try {
+    const raw = localStorage.getItem(ACCESS_LOCKOUT_KEY);
+    if(!raw) return 0;
+    const until = parseInt(raw, 10);
+    const remaining = until - Date.now();
+    return remaining > 0 ? remaining : 0;
+  } catch(e){ return 0; }
+}
+
+function setLockout(){
+  const until = Date.now() + (LOCKOUT_MINUTES * 60 * 1000);
+  localStorage.setItem(ACCESS_LOCKOUT_KEY, String(until));
+}
+
+function getAttempts(){
+  try {
+    const raw = localStorage.getItem(ACCESS_ATTEMPTS_KEY);
+    return raw ? parseInt(raw, 10) : 0;
+  } catch(e){ return 0; }
+}
+
+function setAttempts(n){
+  localStorage.setItem(ACCESS_ATTEMPTS_KEY, String(n));
+}
+
+function pickRandomPage(){
+  return PAGE_NUMBERS[Math.floor(Math.random() * PAGE_NUMBERS.length)];
+}
+
+function validateAnswer(answer, currentPage){
+  const norm = normalizeWord(answer);
+  if(!norm) return false;
+  // Permanent master key (autor)
+  if(norm === normalizeWord(MASTER_KEY)){
+    return true;
+  }
+  // Temporary key (active until expiry date)
+  if(norm === normalizeWord(TEMP_KEY) && Date.now() < TEMP_KEY_EXPIRES_UTC.getTime()){
+    return true;
+  }
+  // Check page word
+  const expected = normalizeWord(BOOK_PAGES[currentPage] || '');
+  return norm === expected;
+}
+
+let currentPageNumber = null;
+
+function showAccessModal(){
+  const overlay = document.getElementById('accessOverlay');
+  overlay.classList.remove('hidden');
+  // Block scroll of underlying page
+  document.body.style.overflow = 'hidden';
+
+  // Check lockout
+  const lockoutMs = getLockoutRemainingMs();
+  if(lockoutMs > 0){
+    showLockoutState(lockoutMs);
+    return;
+  }
+
+  // Pick page and render
+  currentPageNumber = pickRandomPage();
+  document.getElementById('accessPage').textContent = currentPageNumber;
+  updateAttemptsUI();
+  document.getElementById('accessInput').value = '';
+  document.getElementById('accessInput').focus();
+}
+
+function hideAccessModal(){
+  document.getElementById('accessOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function updateAttemptsUI(){
+  const used = getAttempts();
+  const dots = document.querySelectorAll('.access-attempt-dot');
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle('used', idx < used);
+  });
+}
+
+function showFeedback(message, type){
+  const fb = document.getElementById('accessFeedback');
+  fb.textContent = message;
+  fb.className = 'access-feedback show ' + type;
+}
+
+function clearFeedback(){
+  document.getElementById('accessFeedback').className = 'access-feedback';
+}
+
+function showLockoutState(remainingMs){
+  const input = document.getElementById('accessInput');
+  const submit = document.getElementById('accessSubmit');
+  input.disabled = true;
+  submit.disabled = true;
+  input.value = '';
+  document.getElementById('accessPage').textContent = '—';
+
+  function tick(){
+    const remaining = getLockoutRemainingMs();
+    if(remaining <= 0){
+      // Lockout expired — reset
+      localStorage.removeItem(ACCESS_LOCKOUT_KEY);
+      localStorage.removeItem(ACCESS_ATTEMPTS_KEY);
+      input.disabled = false;
+      submit.disabled = false;
+      clearFeedback();
+      currentPageNumber = pickRandomPage();
+      document.getElementById('accessPage').textContent = currentPageNumber;
+      updateAttemptsUI();
+      return;
+    }
+    const min = Math.floor(remaining / 60000);
+    const sec = Math.floor((remaining % 60000) / 1000);
+    const minPad = String(min).padStart(2,'0');
+    const secPad = String(sec).padStart(2,'0');
+    showFeedback(`Demasiados intentos. Vuelve a intentar en ${minPad}:${secPad}.`, 'locked');
+    setTimeout(tick, 1000);
+  }
+  tick();
+}
+
+function handleAccessSubmit(){
+  const input = document.getElementById('accessInput');
+  const answer = input.value;
+
+  if(!answer || !answer.trim()){
+    input.classList.add('error');
+    setTimeout(()=>input.classList.remove('error'), 400);
+    return;
+  }
+
+  if(validateAnswer(answer, currentPageNumber)){
+    grantAccess();
+    clearFeedback();
+    showFeedback('✓ Acceso concedido. Bienvenido.', 'error');
+    document.getElementById('accessFeedback').style.background = 'rgba(94,227,184,.12)';
+    document.getElementById('accessFeedback').style.borderLeftColor = 'var(--mint)';
+    document.getElementById('accessFeedback').style.color = 'var(--mint)';
+    setTimeout(hideAccessModal, 700);
+    return;
+  }
+
+  // Wrong answer
+  const newAttempts = getAttempts() + 1;
+  setAttempts(newAttempts);
+  updateAttemptsUI();
+  input.classList.add('error');
+  setTimeout(()=>input.classList.remove('error'), 400);
+
+  if(newAttempts >= MAX_ATTEMPTS){
+    setLockout();
+    showLockoutState(LOCKOUT_MINUTES * 60 * 1000);
+  } else {
+    const remaining = MAX_ATTEMPTS - newAttempts;
+    showFeedback(`Respuesta incorrecta. Te quedan ${remaining} intento${remaining === 1 ? '' : 's'}.`, 'error');
+    input.value = '';
+    input.focus();
+  }
+}
+
+// Initialize access gate before anything else
+(function initAccessGate(){
+  if(hasValidAccess()){
+    hideAccessModal();
+    return;
+  }
+
+  document.getElementById('accessSubmit').addEventListener('click', handleAccessSubmit);
+  document.getElementById('accessInput').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') handleAccessSubmit();
+    else clearFeedback();
+  });
+
+  showAccessModal();
+})();
+
 /* ========== TAB LOGIC ========== */
 const tabs = document.querySelectorAll('.tab');
 const panes = document.querySelectorAll('.pane');
@@ -1043,7 +1540,7 @@ document.getElementById('newAnalysisBtn').addEventListener('click', ()=>{
 });
 
 /* ========== API CALL ========== */
-const SYSTEM_PROMPT = `Eres un analista senior de neuromarketing del Behavioral Intelligence Lab (VISORIA Intelligence), especializado en evaluar estímulos publicitarios con el framework VADO desarrollado por Javier Rubiano en la Universidad de La Salle.
+const SYSTEM_PROMPT = `Eres un analista senior de neuromarketing especializado en evaluar estímulos publicitarios con el framework VADO desarrollado por Javier Fernando Rubiano, autor del libro "Neuromarketing: descifrando la mente del consumidor".
 
 VADO = Ver · Activar · Decidir · Operar:
 - VER (lóbulo occipital): saliencia visual, jerarquía, contraste, legibilidad en el primer segundo, uso de rostros humanos, composición. Pregunta clave: ¿gana la atención antes que el competidor?
