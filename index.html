@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 :root{
   --navy:#0A1628;
@@ -430,6 +431,134 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 .error-box.show{display:block}
 .error-box b{color:var(--coral)}
 
+/* BRAIN 3D SECTION */
+.brain-3d-section{
+  display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:stretch
+}
+.brain-canvas-wrap{
+  position:relative;border-radius:6px;overflow:hidden;
+  background:radial-gradient(ellipse at center,rgba(20,40,71,.5),rgba(10,22,40,.3));
+  border:1px solid rgba(228,176,74,.15);
+  min-height:380px
+}
+#brainResultCanvas{width:100%;height:100%;display:block;cursor:grab}
+#brainResultCanvas:active{cursor:grabbing}
+.brain-overlay-hint{
+  position:absolute;top:14px;left:14px;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;opacity:.7
+}
+.brain-overlay-pulse{
+  position:absolute;bottom:14px;right:14px;
+  display:flex;align-items:center;gap:8px;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;opacity:.75
+}
+.brain-pulse-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--gold);
+  animation:pulseDot 1.2s ease-in-out infinite
+}
+@keyframes pulseDot{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+
+.brain-legend{
+  display:flex;flex-direction:column;gap:10px;padding:18px;
+  background:rgba(20,40,71,.4);border-radius:6px;
+  border:1px solid rgba(228,176,74,.12)
+}
+.brain-legend h4{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;
+  color:var(--gold);text-transform:uppercase;margin-bottom:4px
+}
+.lobe-legend-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:4px;background:rgba(10,22,40,.5);
+  border-left:3px solid;font-size:12px;line-height:1.3
+}
+.lobe-legend-item .ll-dot{
+  width:11px;height:11px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 10px currentColor
+}
+.lobe-legend-item .ll-name{font-family:'Fraunces',serif;font-weight:500;font-size:13px}
+.lobe-legend-item .ll-state{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:1.2px;text-transform:uppercase;
+  padding:2px 8px;border-radius:2px;margin-left:auto
+}
+.ll-on{background:rgba(94,227,184,.18);color:var(--mint)}
+.ll-partial{background:rgba(255,180,68,.18);color:var(--amber)}
+.ll-off{background:rgba(120,120,120,.15);color:rgba(244,239,230,.4)}
+
+/* EKMAN SECTION */
+.ekman-wrap{
+  display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:stretch
+}
+.ekman-faces{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px
+}
+.ekman-face-card{
+  position:relative;border-radius:6px;overflow:hidden;
+  background:linear-gradient(165deg,rgba(20,40,71,.7),rgba(15,31,58,.4));
+  border:1px solid rgba(228,176,74,.12);
+  aspect-ratio:1;display:flex;flex-direction:column;
+  transition:all .3s
+}
+.ekman-face-card.dominant{
+  border-color:var(--gold);box-shadow:0 0 24px rgba(228,176,74,.25)
+}
+.ekman-face-canvas{flex:1;position:relative;min-height:0}
+.ekman-face-canvas canvas{width:100%;height:100%;display:block}
+.ekman-face-meta{
+  padding:8px 10px;display:flex;align-items:center;justify-content:space-between;
+  background:rgba(10,22,40,.6);border-top:1px solid rgba(228,176,74,.1)
+}
+.ekman-name{
+  font-family:'Fraunces',serif;font-size:12px;font-weight:500;font-style:italic
+}
+.ekman-pct{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--gold)
+}
+.ekman-face-card.dim .ekman-name{opacity:.5}
+.ekman-face-card.dim .ekman-pct{color:rgba(244,239,230,.4)}
+
+.ekman-panel{
+  padding:24px;border-radius:6px;
+  background:linear-gradient(165deg,rgba(20,40,71,.6),rgba(15,31,58,.3));
+  border:1px solid rgba(228,176,74,.15);
+  display:flex;flex-direction:column;gap:14px
+}
+.ekman-dominant-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;
+  color:var(--teal);text-transform:uppercase
+}
+.ekman-dominant-name{
+  font-family:'Fraunces',serif;font-size:34px;font-weight:400;font-style:italic;
+  color:var(--gold);line-height:1
+}
+.ekman-insight{
+  font-size:13.5px;line-height:1.6;color:rgba(244,239,230,.85);font-weight:300
+}
+.ekman-bars{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.ekman-bar-row{display:flex;align-items:center;gap:10px;font-size:11px}
+.ekman-bar-label{
+  font-family:'JetBrains Mono',monospace;letter-spacing:1.2px;text-transform:uppercase;
+  width:80px;color:rgba(244,239,230,.7)
+}
+.ekman-bar-track{
+  flex:1;height:5px;background:rgba(244,239,230,.08);border-radius:2px;overflow:hidden
+}
+.ekman-bar-fill{
+  height:100%;border-radius:2px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)
+}
+.ekman-bar-val{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--gold);
+  width:32px;text-align:right
+}
+
+@media(max-width:900px){
+  .brain-3d-section,.ekman-wrap{grid-template-columns:1fr}
+  .ekman-faces{grid-template-columns:1fr 1fr 1fr}
+}
+
 /* FOOTER */
 .footer{
   margin-top:80px;padding-top:28px;border-top:1px solid rgba(228,176,74,.12);
@@ -652,6 +781,38 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
       <div class="neural-map" id="neuralMap"></div>
     </section>
 
+    <!-- BRAIN 3D SIMULATION -->
+    <section class="detail-section">
+      <h3 class="section-title">Simulación <em>3D</em> del cerebro</h3>
+      <div class="section-sub">Visualización anatómica de la activación · arrastra para rotar</div>
+      <div class="brain-3d-section">
+        <div class="brain-canvas-wrap">
+          <canvas id="brainResultCanvas"></canvas>
+          <div class="brain-overlay-hint">◉ Modelo anatómico interactivo</div>
+          <div class="brain-overlay-pulse"><div class="brain-pulse-dot"></div> Activación en tiempo real</div>
+        </div>
+        <div class="brain-legend">
+          <h4>Lóbulos · Estado</h4>
+          <div id="brainLegend"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EKMAN EMOTIONS -->
+    <section class="detail-section">
+      <h3 class="section-title">Emociones <em>universales</em> de Ekman</h3>
+      <div class="section-sub">Las seis emociones básicas que el estímulo probablemente induce</div>
+      <div class="ekman-wrap">
+        <div class="ekman-faces" id="ekmanFaces"></div>
+        <div class="ekman-panel">
+          <div class="ekman-dominant-label">Emoción dominante</div>
+          <div class="ekman-dominant-name" id="ekmanDominant">—</div>
+          <div class="ekman-insight" id="ekmanInsight">—</div>
+          <div class="ekman-bars" id="ekmanBars"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- RECOMMENDATIONS -->
     <section class="detail-section">
       <h3 class="section-title">Recomendaciones <em>de ajuste</em></h3>
@@ -865,6 +1026,16 @@ Para CADA estímulo que analices, devuelve EXCLUSIVAMENTE un JSON válido — si
     "parietal": {"status": "on|partial|off", "note": "<frase corta>"},
     "frontal": {"status": "on|partial|off", "note": "<frase corta>"}
   },
+  "ekman_emotions": {
+    "joy": <0-100>,
+    "sadness": <0-100>,
+    "anger": <0-100>,
+    "fear": <0-100>,
+    "disgust": <0-100>,
+    "surprise": <0-100>
+  },
+  "dominant_emotion": "<joy|sadness|anger|fear|disgust|surprise>",
+  "emotion_insight": "<oración corta en español explicando por qué la emoción dominante predomina en este estímulo>",
   "recommendations": [
     {"axis": "V|A|D|O", "title": "<título corto>", "description": "<ajuste específico y accionable; usa <strong>...</strong> para destacar la intervención>"},
     {"axis": "V|A|D|O", "title": "...", "description": "..."},
@@ -880,6 +1051,8 @@ Reglas obligatorias:
 - Cada fortaleza, riesgo y recomendación debe ser concreta y referirse al estímulo analizado (no genérica).
 - Si no tienes información suficiente sobre un eje (por ejemplo, un texto que no describe el visual), indícalo en el insight pero igual entrega un score tentativo.
 - Si usas la herramienta de búsqueda web para leer una URL, DESPUÉS de recibir los resultados escribe ÚNICAMENTE el JSON final. No escribas texto explicativo antes ni después del JSON.
+- Para ekman_emotions: estima qué emociones universales (Ekman) probablemente experimenta el espectador al exponerse al estímulo. Los 6 porcentajes NO deben sumar 100 (pueden coexistir varias emociones). Cada valor representa la intensidad esperada de esa emoción específica.
+- dominant_emotion debe ser la de mayor valor en ekman_emotions.
 - SOLO JSON. Sin texto antes o después. Sin backticks. Sin markdown.`;
 
 async function evaluateStimulus(input, audience){
@@ -911,7 +1084,7 @@ async function evaluateStimulus(input, audience){
   }
 
   const body = {
-    model: 'claude-sonnet-4-6',
+    model: 'claude-sonnet-4-5',
     max_tokens: input.kind === 'url' ? 4000 : 1800,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userContent }]
@@ -1073,6 +1246,13 @@ function renderResults(r){
     `;
   }).join('');
 
+  // Brain 3D + Legend
+  renderBrain3D(r.neural_activation || {});
+  renderBrainLegend(r.neural_activation || {});
+
+  // Ekman emotions
+  renderEkman(r.ekman_emotions || {}, r.dominant_emotion, r.emotion_insight);
+
   // Recommendations
   const recList = document.getElementById('recList');
   const axisNames = {V:'Ver', A:'Activar', D:'Decidir', O:'Operar'};
@@ -1091,6 +1271,609 @@ function renderResults(r){
 function escapeHtml(s){
   if(!s) return '';
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============================================================
+   BRAIN 3D · Anatomical lobes with activation pulse
+   ============================================================ */
+let brainScene = null;
+const LOBE_COLORS = {
+  frontal:  0xE4B04A,
+  parietal: 0x00B8C4,
+  temporal: 0xFF6B9D,
+  occipital: 0x9B7EDC,
+  limbic:   0x5EE3B8
+};
+const LOBE_NAMES = {
+  frontal:'Frontal', parietal:'Parietal', temporal:'Temporal',
+  occipital:'Occipital', limbic:'Límbico'
+};
+const STATUS_LABELS = {on:'Activado', partial:'Parcial', off:'Sin activar'};
+
+function renderBrainLegend(activation){
+  const wrap = document.getElementById('brainLegend');
+  if(!wrap) return;
+  const order = ['frontal','parietal','temporal','occipital','limbic'];
+  wrap.innerHTML = order.map(key => {
+    const data = activation[key] || {status:'off', note:''};
+    const colorHex = '#' + LOBE_COLORS[key].toString(16).padStart(6,'0');
+    return `
+      <div class="lobe-legend-item" style="border-left-color:${colorHex}">
+        <div class="ll-dot" style="background:${colorHex};color:${colorHex}"></div>
+        <div class="ll-name">${LOBE_NAMES[key]}</div>
+        <div class="ll-state ll-${data.status}">${STATUS_LABELS[data.status]||'—'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderBrain3D(activation){
+  const canvas = document.getElementById('brainResultCanvas');
+  if(!canvas || typeof THREE === 'undefined') return;
+
+  // Destroy previous scene if any
+  if(brainScene){
+    brainScene.dispose();
+    brainScene = null;
+  }
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, 1, .1, 100);
+  camera.position.set(0, .15, 6);
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+
+  function resize(){
+    const w = canvas.parentElement.clientWidth;
+    const h = canvas.parentElement.clientHeight;
+    renderer.setSize(w, h, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  const resizeHandler = ()=>resize();
+  window.addEventListener('resize', resizeHandler);
+
+  scene.add(new THREE.AmbientLight(0x2a3450, .6));
+  const key = new THREE.DirectionalLight(0xffffff, .7);
+  key.position.set(4, 5, 6); scene.add(key);
+  const warm = new THREE.PointLight(0xE4B04A, 1, 12);
+  warm.position.set(-3, 1, 3); scene.add(warm);
+  const cool = new THREE.PointLight(0x00B8C4, .8, 12);
+  cool.position.set(3, 1, -2); scene.add(cool);
+
+  const group = new THREE.Group();
+
+  function noise3D(x,y,z){
+    return (
+      Math.sin(x*3.1 + y*2.7) * 0.5 +
+      Math.sin(y*4.2 + z*3.3) * 0.3 +
+      Math.sin(z*3.8 + x*4.1) * 0.2 +
+      Math.sin(x*7.5)*Math.cos(y*6.5) * 0.15
+    );
+  }
+  function classifyLobe(x,y,z){
+    if(z < -0.75) return 'occipital';
+    if(z > 0.3 && y > -0.3) return 'frontal';
+    if(Math.abs(x) > 0.55 && y < 0.15 && z > -0.7 && z < 0.55) return 'temporal';
+    if(y > 0.3 && z > -0.75 && z < 0.4) return 'parietal';
+    if(y > 0) return 'parietal';
+    if(y < -0.2) return 'temporal';
+    return 'frontal';
+  }
+  function buildHemisphere(side){
+    const geom = new THREE.SphereGeometry(1.55, 140, 100);
+    const pos = geom.attributes.position;
+    const colorAttr = new Float32Array(pos.count*3);
+    const lobeIdx = new Float32Array(pos.count);
+    const lobeOrder = ['frontal','parietal','temporal','occipital'];
+    for(let i=0;i<pos.count;i++){
+      let x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+      x *= 0.8; y *= 0.88; z *= 1.2;
+      const lobe = classifyLobe(x/0.8, y/0.88, z/1.2);
+      lobeIdx[i] = lobeOrder.indexOf(lobe);
+      const onInner = side === -1 ? x > 0 : x < 0;
+      if(onInner){
+        x = side * 0.01;
+      }
+      if(!onInner){
+        const n = noise3D(x*2.4, y*2.4, z*2.4);
+        const push = n * 0.09;
+        const len = Math.sqrt(x*x+y*y+z*z);
+        if(len > 0){
+          x += (x/len)*push; y += (y/len)*push; z += (z/len)*push;
+        }
+      }
+      pos.setXYZ(i,x,y,z);
+      colorAttr[i*3] = 0.55;
+      colorAttr[i*3+1] = 0.45;
+      colorAttr[i*3+2] = 0.50;
+    }
+    geom.setAttribute('color', new THREE.BufferAttribute(colorAttr, 3));
+    geom.setAttribute('lobeIdx', new THREE.BufferAttribute(lobeIdx, 1));
+    geom.computeVertexNormals();
+    return geom;
+  }
+
+  const leftGeom = buildHemisphere(-1);
+  const rightGeom = buildHemisphere(1);
+  const brainMat = new THREE.MeshStandardMaterial({
+    vertexColors:true, roughness:.8, metalness:.1,
+    emissive:0x2a1a30, emissiveIntensity:.1, flatShading:false
+  });
+  const leftHemi = new THREE.Mesh(leftGeom, brainMat.clone());
+  const rightHemi = new THREE.Mesh(rightGeom, brainMat.clone());
+  leftHemi.position.x = -0.08;
+  rightHemi.position.x = 0.08;
+  group.add(leftHemi); group.add(rightHemi);
+
+  // Helper to update colors by activation
+  const lobeOrder = ['frontal','parietal','temporal','occipital'];
+  function colorHexToRgb(hex){
+    return [((hex>>16)&255)/255, ((hex>>8)&255)/255, (hex&255)/255];
+  }
+  function getIntensity(status, pulse){
+    if(status === 'on') return 0.55 + pulse * 0.45;
+    if(status === 'partial') return 0.25 + pulse * 0.2;
+    return 0.04;
+  }
+  function updateColors(activation, pulse){
+    [leftGeom, rightGeom].forEach(g => {
+      const col = g.attributes.color.array;
+      const idxArr = g.attributes.lobeIdx.array;
+      const count = g.attributes.position.count;
+      for(let i=0;i<count;i++){
+        const lobeName = lobeOrder[idxArr[i]] || 'frontal';
+        const data = activation[lobeName] || {status:'off'};
+        const intensity = getIntensity(data.status, pulse);
+        if(intensity > 0.1){
+          const [r,gg,b] = colorHexToRgb(LOBE_COLORS[lobeName]);
+          col[i*3]   = r * intensity * 1.4 + 0.08;
+          col[i*3+1] = gg * intensity * 1.4 + 0.08;
+          col[i*3+2] = b * intensity * 1.4 + 0.08;
+        } else {
+          col[i*3]   = 0.42;
+          col[i*3+1] = 0.34;
+          col[i*3+2] = 0.40;
+        }
+      }
+      g.attributes.color.needsUpdate = true;
+    });
+  }
+
+  // Limbic system inside
+  const limbicGroup = new THREE.Group();
+  function makeLimbicPart(geom, pos, scale){
+    const m = new THREE.Mesh(geom, new THREE.MeshStandardMaterial({
+      color: LOBE_COLORS.limbic, emissive: LOBE_COLORS.limbic,
+      emissiveIntensity:.2, transparent:true, opacity:.6
+    }));
+    m.position.set(pos[0], pos[1], pos[2]);
+    if(scale) m.scale.set(scale[0], scale[1], scale[2]);
+    return m;
+  }
+  const amygL = makeLimbicPart(new THREE.SphereGeometry(.16, 20, 20), [-0.58, -0.2, 0.3]);
+  const amygR = makeLimbicPart(new THREE.SphereGeometry(.16, 20, 20), [0.58, -0.2, 0.3]);
+  limbicGroup.add(amygL, amygR);
+
+  const hippoMat = new THREE.MeshStandardMaterial({
+    color: LOBE_COLORS.limbic, emissive: LOBE_COLORS.limbic,
+    emissiveIntensity:.15, transparent:true, opacity:.5
+  });
+  const hippoL = new THREE.Mesh(new THREE.TorusGeometry(.28, .07, 10, 18, Math.PI), hippoMat.clone());
+  hippoL.position.set(-0.5, -0.22, -0.1);
+  hippoL.rotation.set(Math.PI/2, 0, -.3);
+  const hippoR = new THREE.Mesh(new THREE.TorusGeometry(.28, .07, 10, 18, Math.PI), hippoMat.clone());
+  hippoR.position.set(0.5, -0.22, -0.1);
+  hippoR.rotation.set(Math.PI/2, 0, .3);
+  limbicGroup.add(hippoL, hippoR);
+
+  group.add(limbicGroup);
+
+  // Cerebellum
+  const cerebGeom = new THREE.SphereGeometry(.5, 48, 36);
+  const cp = cerebGeom.attributes.position;
+  for(let i=0;i<cp.count;i++){
+    let x = cp.getX(i), y = cp.getY(i), z = cp.getZ(i);
+    x *= 1.35; y *= .75; z *= .8;
+    const ridge = Math.sin(y*28) * .035;
+    const len = Math.sqrt(x*x+y*y+z*z);
+    if(len>0){ x += (x/len)*ridge; y += (y/len)*ridge; z += (z/len)*ridge; }
+    cp.setXYZ(i,x,y,z);
+  }
+  cerebGeom.computeVertexNormals();
+  const cerebellum = new THREE.Mesh(cerebGeom, new THREE.MeshStandardMaterial({
+    color:0xBFA09A, emissive:0x2a1830, emissiveIntensity:.12, roughness:.85
+  }));
+  cerebellum.position.set(0,-.85,-1.2);
+  group.add(cerebellum);
+
+  // Brainstem
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(.2,.26,.55,16),
+    new THREE.MeshStandardMaterial({color:0xB88880, roughness:.9, emissive:0x201018, emissiveIntensity:.1})
+  );
+  stem.position.set(0,-1.2,-.95);
+  stem.rotation.x = .25;
+  group.add(stem);
+
+  scene.add(group);
+
+  // Drag to rotate
+  let isDown=false, px=0, py=0, ry=0, rx=0, autoRot=true;
+  const onDown = (e)=>{isDown=true; px=e.clientX; py=e.clientY; autoRot=false};
+  const onUp = ()=>isDown=false;
+  const onMove = (e)=>{
+    if(!isDown) return;
+    ry += (e.clientX-px)*.01;
+    rx += (e.clientY-py)*.008;
+    rx = Math.max(-.8, Math.min(.8, rx));
+    px=e.clientX; py=e.clientY;
+  };
+  canvas.addEventListener('pointerdown', onDown);
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointermove', onMove);
+
+  let t = 0;
+  let stopped = false;
+  function loop(){
+    if(stopped) return;
+    t += .012;
+    if(autoRot) ry += .0035;
+    group.rotation.y = ry;
+    group.rotation.x = rx + Math.sin(t*.3)*.03;
+
+    const pulse = Math.sin(t*3)*.5 + .5;
+    updateColors(activation, pulse);
+
+    // Limbic pulse
+    const limbicData = activation.limbic || {status:'off'};
+    const limbicIntensity = getIntensity(limbicData.status, pulse);
+    limbicGroup.children.forEach(part=>{
+      if(part.material){
+        part.material.emissiveIntensity = limbicIntensity * 0.9;
+        part.material.opacity = 0.25 + limbicIntensity * 0.55;
+      }
+    });
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  // Expose dispose for cleanup
+  brainScene = {
+    dispose: ()=>{
+      stopped = true;
+      window.removeEventListener('resize', resizeHandler);
+      canvas.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointermove', onMove);
+      renderer.dispose();
+    }
+  };
+}
+
+/* ============================================================
+   EKMAN EMOTIONS · 3D faces + bars
+   ============================================================ */
+const EKMAN_DEFS = [
+  {key:'joy',      name:'Alegría',  color:0xE4B04A},
+  {key:'surprise', name:'Sorpresa', color:0xFFB444},
+  {key:'sadness',  name:'Tristeza', color:0x00B8C4},
+  {key:'anger',    name:'Ira',      color:0xFF5555},
+  {key:'fear',     name:'Miedo',    color:0x9B7EDC},
+  {key:'disgust',  name:'Asco',     color:0x5EE3B8}
+];
+const ekmanScenes = {};
+
+function renderEkman(emotions, dominantKey, insight){
+  const wrap = document.getElementById('ekmanFaces');
+  const bars = document.getElementById('ekmanBars');
+  const dominantEl = document.getElementById('ekmanDominant');
+  const insightEl = document.getElementById('ekmanInsight');
+  if(!wrap) return;
+
+  // Find dominant if not provided
+  if(!dominantKey){
+    let max = -1;
+    EKMAN_DEFS.forEach(e => {
+      if((emotions[e.key]||0) > max){ max = emotions[e.key]||0; dominantKey = e.key; }
+    });
+  }
+  const dominantDef = EKMAN_DEFS.find(e => e.key === dominantKey) || EKMAN_DEFS[0];
+  dominantEl.textContent = dominantDef.name;
+  dominantEl.style.color = '#' + dominantDef.color.toString(16).padStart(6,'0');
+  insightEl.textContent = insight || `Esta pieza induce principalmente ${dominantDef.name.toLowerCase()} en el espectador.`;
+
+  // Cards
+  wrap.innerHTML = EKMAN_DEFS.map(e => {
+    const val = Math.round(emotions[e.key] || 0);
+    const isDominant = e.key === dominantKey;
+    const isDim = val < 20 && !isDominant;
+    const colorHex = '#' + e.color.toString(16).padStart(6,'0');
+    return `
+      <div class="ekman-face-card ${isDominant?'dominant':''} ${isDim?'dim':''}" data-emotion="${e.key}">
+        <div class="ekman-face-canvas">
+          <canvas id="ekmanCanvas_${e.key}"></canvas>
+        </div>
+        <div class="ekman-face-meta">
+          <div class="ekman-name" style="${isDominant?`color:${colorHex}`:''}">${e.name}</div>
+          <div class="ekman-pct">${val}%</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Bars
+  bars.innerHTML = EKMAN_DEFS.map(e => {
+    const val = Math.round(emotions[e.key] || 0);
+    const colorHex = '#' + e.color.toString(16).padStart(6,'0');
+    return `
+      <div class="ekman-bar-row">
+        <div class="ekman-bar-label">${e.name}</div>
+        <div class="ekman-bar-track">
+          <div class="ekman-bar-fill" style="background:${colorHex};width:0" data-target="${val}"></div>
+        </div>
+        <div class="ekman-bar-val">${val}%</div>
+      </div>
+    `;
+  }).join('');
+
+  // Animate bars
+  setTimeout(()=>{
+    bars.querySelectorAll('.ekman-bar-fill').forEach(b => {
+      b.style.width = (b.dataset.target || 0) + '%';
+    });
+  }, 100);
+
+  // 3D faces
+  Object.keys(ekmanScenes).forEach(k => {
+    if(ekmanScenes[k]) ekmanScenes[k].dispose();
+  });
+  EKMAN_DEFS.forEach(e => {
+    const val = emotions[e.key] || 0;
+    buildEkmanFace(e, val);
+  });
+}
+
+function buildEkmanFace(def, intensity){
+  const canvas = document.getElementById('ekmanCanvas_' + def.key);
+  if(!canvas || typeof THREE === 'undefined') return;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 1, .1, 100);
+  camera.position.set(0, 0, 4.5);
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+
+  function resize(){
+    const w = canvas.parentElement.clientWidth;
+    const h = canvas.parentElement.clientHeight;
+    renderer.setSize(w, h, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  const resizeHandler = ()=>resize();
+  window.addEventListener('resize', resizeHandler);
+
+  scene.add(new THREE.AmbientLight(0x2a3450, .8));
+  const light = new THREE.DirectionalLight(0xffffff, .8);
+  light.position.set(2, 3, 4); scene.add(light);
+  const rim = new THREE.PointLight(def.color, intensity/100 * 1.5 + .2, 8);
+  rim.position.set(-2, 1, 2); scene.add(rim);
+
+  const group = new THREE.Group();
+
+  // Face base (oval head)
+  const headGeom = new THREE.SphereGeometry(1.1, 48, 36);
+  const headPos = headGeom.attributes.position;
+  for(let i=0;i<headPos.count;i++){
+    let x = headPos.getX(i), y = headPos.getY(i), z = headPos.getZ(i);
+    y *= 1.15; z *= 0.85;
+    headPos.setXYZ(i,x,y,z);
+  }
+  headGeom.computeVertexNormals();
+
+  const dimmed = intensity < 20;
+  const baseColor = dimmed ? 0x3a3a4a : def.color;
+  const emInt = dimmed ? 0.05 : (0.15 + intensity/100 * 0.5);
+
+  const headMat = new THREE.MeshStandardMaterial({
+    color: baseColor,
+    emissive: baseColor,
+    emissiveIntensity: emInt,
+    roughness: .6,
+    metalness: .2,
+    transparent: true,
+    opacity: dimmed ? 0.5 : 0.92
+  });
+  const head = new THREE.Mesh(headGeom, headMat);
+  group.add(head);
+
+  // Eyes — vary expression per emotion
+  const eyeMat = new THREE.MeshBasicMaterial({color: 0x0A1628});
+  const eyeGeo = new THREE.SphereGeometry(.11, 16, 12);
+
+  // Default eye positions
+  let eyeY = 0.18, eyeX = 0.38, eyeZ = 0.92;
+  const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+  const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+
+  // Eyebrows — shape varies
+  const browMat = new THREE.MeshBasicMaterial({color: 0x0A1628});
+  const browGeo = new THREE.BoxGeometry(.35, .04, .04);
+  const leftBrow = new THREE.Mesh(browGeo, browMat);
+  const rightBrow = new THREE.Mesh(browGeo, browMat);
+
+  // Mouth — shape varies most
+  const mouthMat = new THREE.MeshBasicMaterial({color: 0x0A1628});
+  let mouth;
+
+  switch(def.key){
+    case 'joy':
+      // Wide eyes, slight squint, big smile
+      leftEye.position.set(-eyeX, eyeY-0.02, eyeZ);
+      rightEye.position.set(eyeX, eyeY-0.02, eyeZ);
+      leftEye.scale.y = 0.7;
+      rightEye.scale.y = 0.7;
+      leftBrow.position.set(-eyeX, eyeY+0.28, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.28, eyeZ);
+      leftBrow.rotation.z = 0.12;
+      rightBrow.rotation.z = -0.12;
+      // Smile — curved up
+      {
+        const curve = new THREE.EllipseCurve(0, -0.32, 0.42, 0.18, Math.PI, 2*Math.PI, false, 0);
+        const pts = curve.getPoints(20).map(p => new THREE.Vector3(p.x, -p.y, 0.95));
+        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.05, 8);
+        mouth = new THREE.Mesh(mGeom, mouthMat);
+      }
+      break;
+
+    case 'sadness':
+      // Droopy eyes, brows angled up in middle, mouth curved down
+      leftEye.position.set(-eyeX, eyeY-0.05, eyeZ);
+      rightEye.position.set(eyeX, eyeY-0.05, eyeZ);
+      leftBrow.position.set(-eyeX, eyeY+0.22, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.22, eyeZ);
+      leftBrow.rotation.z = -0.35; // inner corner up
+      rightBrow.rotation.z = 0.35;
+      {
+        const curve = new THREE.EllipseCurve(0, -0.45, 0.38, 0.15, 0, Math.PI, false, 0);
+        const pts = curve.getPoints(20).map(p => new THREE.Vector3(p.x, -p.y - 0.05, 0.95));
+        const mGeom = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.045, 8);
+        mouth = new THREE.Mesh(mGeom, mouthMat);
+      }
+      break;
+
+    case 'anger':
+      // Narrowed eyes, brows angled down toward middle, tight mouth
+      leftEye.position.set(-eyeX, eyeY, eyeZ);
+      rightEye.position.set(eyeX, eyeY, eyeZ);
+      leftEye.scale.y = 0.55;
+      rightEye.scale.y = 0.55;
+      leftBrow.position.set(-eyeX*0.9, eyeY+0.22, eyeZ);
+      rightBrow.position.set(eyeX*0.9, eyeY+0.22, eyeZ);
+      leftBrow.rotation.z = 0.45; // inner corner DOWN (angry V)
+      rightBrow.rotation.z = -0.45;
+      leftBrow.scale.set(1, 1.2, 1);
+      rightBrow.scale.set(1, 1.2, 1);
+      // Tight straight mouth
+      {
+        const mGeom = new THREE.BoxGeometry(0.55, 0.06, 0.05);
+        mouth = new THREE.Mesh(mGeom, mouthMat);
+        mouth.position.set(0, -0.38, 0.95);
+      }
+      break;
+
+    case 'fear':
+      // Wide eyes (full circles, large), high brows, oval mouth
+      leftEye.position.set(-eyeX, eyeY-0.02, eyeZ);
+      rightEye.position.set(eyeX, eyeY-0.02, eyeZ);
+      leftEye.scale.set(1.3, 1.3, 1);
+      rightEye.scale.set(1.3, 1.3, 1);
+      leftBrow.position.set(-eyeX, eyeY+0.36, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.36, eyeZ);
+      leftBrow.rotation.z = -0.15;
+      rightBrow.rotation.z = 0.15;
+      // Open oval mouth (gasping)
+      {
+        const mGeom = new THREE.TorusGeometry(0.16, 0.06, 12, 24);
+        mouth = new THREE.Mesh(mGeom, mouthMat);
+        mouth.position.set(0, -0.42, 0.95);
+        mouth.scale.set(0.85, 1.3, 1);
+      }
+      break;
+
+    case 'disgust':
+      // Squint, raised brow on one side, asymmetric mouth (curled lip)
+      leftEye.position.set(-eyeX, eyeY, eyeZ);
+      rightEye.position.set(eyeX, eyeY, eyeZ);
+      leftEye.scale.y = 0.65;
+      rightEye.scale.y = 0.65;
+      leftBrow.position.set(-eyeX, eyeY+0.24, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.30, eyeZ); // one raised
+      leftBrow.rotation.z = 0.18;
+      rightBrow.rotation.z = -0.05;
+      // Asymmetric mouth — curled up on one side
+      {
+        const curve = new THREE.QuadraticBezierCurve3(
+          new THREE.Vector3(-0.28, -0.42, 0.95),
+          new THREE.Vector3(0, -0.32, 0.95),
+          new THREE.Vector3(0.28, -0.30, 0.95)
+        );
+        const mGeom = new THREE.TubeGeometry(curve, 18, 0.05, 8);
+        mouth = new THREE.Mesh(mGeom, mouthMat);
+      }
+      // Nose wrinkle hint
+      const noseGeom = new THREE.SphereGeometry(0.06, 12, 8);
+      const nose1 = new THREE.Mesh(noseGeom, browMat);
+      nose1.position.set(-0.08, -0.05, 0.97);
+      const nose2 = new THREE.Mesh(noseGeom, browMat);
+      nose2.position.set(0.08, -0.05, 0.97);
+      group.add(nose1, nose2);
+      break;
+
+    case 'surprise':
+      // Huge round eyes, high brows, round 'O' mouth
+      leftEye.position.set(-eyeX, eyeY-0.02, eyeZ);
+      rightEye.position.set(eyeX, eyeY-0.02, eyeZ);
+      leftEye.scale.set(1.4, 1.4, 1);
+      rightEye.scale.set(1.4, 1.4, 1);
+      leftBrow.position.set(-eyeX, eyeY+0.38, eyeZ);
+      rightBrow.position.set(eyeX, eyeY+0.38, eyeZ);
+      leftBrow.rotation.z = -0.05;
+      rightBrow.rotation.z = 0.05;
+      // Round O mouth
+      {
+        const mGeom = new THREE.TorusGeometry(0.13, 0.05, 12, 24);
+        mouth = new THREE.Mesh(mGeom, mouthMat);
+        mouth.position.set(0, -0.42, 0.95);
+      }
+      break;
+  }
+
+  group.add(leftEye, rightEye, leftBrow, rightBrow);
+  if(mouth) group.add(mouth);
+
+  // Highlights on eyes (white speckle)
+  const highlightMat = new THREE.MeshBasicMaterial({color: 0xF4EFE6});
+  const hGeo = new THREE.SphereGeometry(.03, 8, 8);
+  const lh = new THREE.Mesh(hGeo, highlightMat);
+  lh.position.copy(leftEye.position).add(new THREE.Vector3(0.04, 0.04, 0.08));
+  const rh = new THREE.Mesh(hGeo, highlightMat);
+  rh.position.copy(rightEye.position).add(new THREE.Vector3(0.04, 0.04, 0.08));
+  group.add(lh, rh);
+
+  scene.add(group);
+
+  let t = 0;
+  let stopped = false;
+  function loop(){
+    if(stopped) return;
+    t += .015;
+    group.rotation.y = Math.sin(t*0.6) * 0.25;
+    group.rotation.x = Math.sin(t*0.4) * 0.05;
+
+    // Pulse for dominant / high-intensity emotions
+    if(intensity > 30){
+      const pulse = Math.sin(t*2.5)*.5 + .5;
+      headMat.emissiveIntensity = (0.15 + intensity/100 * 0.5) + pulse * (intensity/200);
+    }
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  ekmanScenes[def.key] = {
+    dispose: ()=>{
+      stopped = true;
+      window.removeEventListener('resize', resizeHandler);
+      renderer.dispose();
+    }
+  };
 }
 
 // allow <strong> tags in descriptions, escape everything else
