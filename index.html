@@ -1138,7 +1138,7 @@ async function evaluateStimulus(input, audience){
 
   const body = {
     model: 'claude-sonnet-4-5',
-    max_tokens: input.kind === 'url' ? 4000 : 1800,
+    max_tokens: input.kind === 'url' ? 5000 : 3500,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userContent }]
   };
@@ -1220,6 +1220,12 @@ async function evaluateStimulus(input, audience){
 
   if(!parsed){
     console.error('All text blocks:', textBlocks);
+    // Check if response looks truncated (no closing brace at end)
+    const last = textBlocks[textBlocks.length-1] || '';
+    const looksTruncated = !last.trim().endsWith('}') || last.length > 100 && last.split('{').length > last.split('}').length;
+    if(looksTruncated){
+      throw new Error('La respuesta del modelo se truncó (alcanzó el límite de tokens). Intenta con un brief más corto o avisa al desarrollador para aumentar el límite.');
+    }
     throw new Error('No se pudo extraer JSON válido de la respuesta del modelo' + (lastError ? ': ' + lastError.message : '.'));
   }
 
