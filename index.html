@@ -645,7 +645,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 
 /* LEFT VISUAL SIDE */
 .access-visual{
-  position:relative;background:#0A1628;overflow:hidden;min-height:660px
+  position:relative;background:#0A1628;overflow:hidden;min-height:600px
 }
 .access-visual-img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55
@@ -655,7 +655,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
   background:linear-gradient(135deg, rgba(10,22,40,.35) 0%, rgba(10,22,40,.78) 100%)
 }
 .access-visual-content{
-  position:relative;height:100%;padding:36px 32px;
+  position:relative;height:100%;padding:30px 28px;
   display:flex;flex-direction:column;justify-content:space-between
 }
 .access-visual-badge{
@@ -703,11 +703,11 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 
 /* RIGHT FORM SIDE */
 .access-form{
-  padding:32px 36px;display:flex;flex-direction:column;
+  padding:26px 32px;display:flex;flex-direction:column;
   overflow-y:auto;max-height:94vh
 }
 .access-brand{
-  display:flex;align-items:center;gap:10px;margin-bottom:22px
+  display:flex;align-items:center;gap:10px;margin-bottom:14px
 }
 .access-brand-mark{
   width:32px;height:32px;border-radius:4px;
@@ -730,13 +730,13 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 }
 
 .access-title{
-  font-family:'Fraunces',serif;font-size:24px;font-weight:400;line-height:1.2;
-  margin-bottom:12px
+  font-family:'Fraunces',serif;font-size:21px;font-weight:400;line-height:1.2;
+  margin-bottom:8px
 }
 .access-title em{font-style:italic;color:var(--gold);font-weight:500}
 .access-desc{
-  font-size:13.5px;line-height:1.55;color:rgba(244,239,230,.78);
-  margin-bottom:6px;font-weight:300
+  font-size:12.5px;line-height:1.5;color:rgba(244,239,230,.78);
+  margin-bottom:14px;font-weight:300
 }
 .access-hint{
   font-family:'JetBrains Mono',monospace;font-size:10px;
@@ -745,15 +745,15 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 }
 
 .access-question{
-  padding:18px 20px;border-radius:5px;
+  padding:14px 16px;border-radius:5px;
   background:rgba(10,22,40,.5);
   border:1px solid rgba(228,176,74,.18);
-  margin-bottom:18px
+  margin-bottom:12px
 }
 .access-q-label{
-  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;
   letter-spacing:2px;color:var(--teal);text-transform:uppercase;
-  margin-bottom:8px
+  margin-bottom:6px
 }
 .access-q-text{
   font-family:'Fraunces',serif;font-size:15px;font-weight:400;line-height:1.4;font-style:italic
@@ -768,19 +768,20 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
   color:rgba(244,239,230,.5);margin-top:6px;font-style:italic
 }
 .access-buy-quote{
-  text-align:center;font-family:'Fraunces',serif;font-size:13.5px;
-  font-style:italic;line-height:1.45;color:rgba(244,239,230,.78);
-  margin-bottom:14px;font-weight:300
+  text-align:center;font-family:'Fraunces',serif;font-size:13px;
+  font-style:italic;line-height:1.4;color:rgba(244,239,230,.78);
+  margin-bottom:10px;font-weight:300
 }
 
 .access-input{
-  width:100%;padding:14px 16px;
+  width:100%;padding:11px 14px;
   background:rgba(10,22,40,.7);
   border:1px solid rgba(228,176,74,.25);
   border-radius:5px;color:var(--paper);
-  font-family:'Inter Tight', sans-serif;font-size:14.5px;
+  font-family:'Inter Tight', sans-serif;font-size:14px;
   outline:none;transition:all .25s;
-  margin-bottom:14px
+  margin-bottom:10px;
+  box-sizing:border-box
 }
 .access-input:focus{
   border-color:var(--gold);background:rgba(10,22,40,.9);
@@ -814,10 +815,10 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 }
 
 .access-actions{
-  display:flex;gap:10px;margin-bottom:24px
+  display:flex;gap:10px;margin-bottom:16px
 }
 .access-btn{
-  flex:1;padding:13px 18px;border-radius:4px;
+  flex:1;padding:12px 18px;border-radius:4px;
   border:1px solid;cursor:pointer;
   font-family:'JetBrains Mono',monospace;
   font-size:11px;letter-spacing:2px;text-transform:uppercase;
@@ -837,7 +838,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 
 .access-divider{
   display:flex;align-items:center;gap:14px;
-  margin:22px 0;color:rgba(244,239,230,.35);
+  margin:14px 0 10px;color:rgba(244,239,230,.35);
   font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px
 }
 .access-divider::before, .access-divider::after{
@@ -863,7 +864,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 .access-buy-amazon{
   background:linear-gradient(135deg, #E8772D, #D96323);
   color:#FFFFFF;border:1px solid rgba(232,119,45,.4);
-  padding:15px 18px;font-weight:600;font-size:12px
+  padding:13px 18px;font-weight:600;font-size:12px
 }
 .access-buy-amazon:hover{
   transform:translateY(-1px);
@@ -872,7 +873,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 }
 .access-buy-sublabel{
   text-align:center;font-size:10px;color:rgba(244,239,230,.5);
-  margin-top:6px;margin-bottom:14px;font-style:italic;
+  margin-top:5px;margin-bottom:10px;font-style:italic;
   font-family:'Inter Tight', sans-serif
 }
 .access-buy-web{
@@ -899,10 +900,11 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 }
 
 .access-footer-text{
-  text-align:center;font-family:'JetBrains Mono',monospace;
-  font-size:9px;letter-spacing:1.5px;color:rgba(244,239,230,.4);
-  margin-top:10px;text-transform:uppercase
+  text-align:center;font-family:'Inter Tight', sans-serif;
+  font-size:9px;line-height:1.4;color:rgba(244,239,230,.4);
+  margin-top:12px;font-weight:300;padding:0 6px
 }
+.access-footer-text strong{color:rgba(244,239,230,.55);font-weight:500}
 
 @media(max-width:760px){
   .access-modal{
@@ -991,7 +993,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
         </a>
       </div>
 
-      <div class="access-footer-text">Neuro-VADO · Javier Fernando Rubiano</div>
+      <div class="access-footer-text">© 2026 <strong>Javier Fernando Rubiano Espinosa</strong>. Todos los derechos reservados. Prohibida su reproducción total o parcial por cualquier medio sin autorización escrita del autor.</div>
     </div>
 
   </div>
