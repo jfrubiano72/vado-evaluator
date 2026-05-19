@@ -629,16 +629,82 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 }
 .access-overlay.hidden{display:none}
 .access-modal{
-  width:100%;max-width:540px;
+  width:100%;max-width:920px;
   background:linear-gradient(165deg, rgba(20,40,71,.95), rgba(15,31,58,.95));
   border:1px solid rgba(228,176,74,.25);
-  border-radius:8px;padding:36px 38px;
-  position:relative;overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 80px rgba(228,176,74,.08)
+  border-radius:8px;overflow:hidden;
+  position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 80px rgba(228,176,74,.08);
+  display:grid;grid-template-columns:420px 1fr;
+  max-height:94vh
 }
 .access-modal::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:5;
   background:linear-gradient(90deg, transparent, var(--gold), transparent)
+}
+
+/* LEFT VISUAL SIDE */
+.access-visual{
+  position:relative;background:#0A1628;overflow:hidden;min-height:660px
+}
+.access-visual-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55
+}
+.access-visual-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg, rgba(10,22,40,.35) 0%, rgba(10,22,40,.78) 100%)
+}
+.access-visual-content{
+  position:relative;height:100%;padding:36px 32px;
+  display:flex;flex-direction:column;justify-content:space-between
+}
+.access-visual-badge{
+  display:inline-block;padding:6px 12px;
+  background:rgba(228,176,74,.18);
+  border:1px solid rgba(228,176,74,.45);
+  border-radius:3px;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  letter-spacing:2px;color:var(--gold);text-transform:uppercase;
+  margin-bottom:18px;align-self:flex-start
+}
+.access-visual-hook{
+  font-family:'Fraunces',serif;font-size:34px;line-height:1.05;
+  font-weight:400;color:var(--paper);margin-bottom:18px
+}
+.access-visual-hook em{color:var(--gold);font-style:italic}
+.access-visual-sub{
+  font-size:13.5px;line-height:1.55;color:rgba(244,239,230,.85);
+  font-weight:300;max-width:300px
+}
+.access-book-card{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;
+  background:rgba(228,176,74,.12);
+  border:1px solid rgba(228,176,74,.3);
+  border-radius:5px
+}
+.access-book-thumb{
+  width:54px;height:auto;border-radius:2px;flex-shrink:0;
+  display:block
+}
+.access-book-info{flex:1;min-width:0}
+.access-book-label{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;
+  margin-bottom:3px
+}
+.access-book-title{
+  font-family:'Fraunces',serif;font-size:13px;font-weight:500;
+  line-height:1.25;color:var(--paper);margin-bottom:3px
+}
+.access-book-author{
+  font-size:10.5px;color:rgba(244,239,230,.6);line-height:1.3
+}
+
+/* RIGHT FORM SIDE */
+.access-form{
+  padding:32px 36px;display:flex;flex-direction:column;
+  overflow-y:auto;max-height:94vh
 }
 .access-brand{
   display:flex;align-items:center;gap:10px;margin-bottom:22px
@@ -690,12 +756,21 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
   margin-bottom:8px
 }
 .access-q-text{
-  font-family:'Fraunces',serif;font-size:17px;font-weight:400;line-height:1.4;font-style:italic
+  font-family:'Fraunces',serif;font-size:15px;font-weight:400;line-height:1.4;font-style:italic
 }
 .access-q-text strong{
   font-weight:600;color:var(--gold);font-style:normal;
-  font-family:'JetBrains Mono',monospace;font-size:18px;
+  font-family:'JetBrains Mono',monospace;font-size:16px;
   padding:2px 8px;background:rgba(228,176,74,.12);border-radius:3px;margin:0 3px
+}
+.access-q-hint{
+  font-family:'Inter Tight', sans-serif;font-size:10.5px;
+  color:rgba(244,239,230,.5);margin-top:6px;font-style:italic
+}
+.access-buy-quote{
+  text-align:center;font-family:'Fraunces',serif;font-size:13.5px;
+  font-style:italic;line-height:1.45;color:rgba(244,239,230,.78);
+  margin-bottom:14px;font-weight:300
 }
 
 .access-input{
@@ -786,20 +861,29 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
   transition:all .25s;font-weight:500
 }
 .access-buy-amazon{
-  background:linear-gradient(135deg, #FF9900, #FF6B00);
-  color:#FFFFFF;border:1px solid rgba(255,153,0,.4)
+  background:linear-gradient(135deg, #E8772D, #D96323);
+  color:#FFFFFF;border:1px solid rgba(232,119,45,.4);
+  padding:15px 18px;font-weight:600;font-size:12px
 }
 .access-buy-amazon:hover{
   transform:translateY(-1px);
-  box-shadow:0 6px 18px rgba(255,153,0,.25)
+  box-shadow:0 6px 18px rgba(232,119,45,.3);
+  background:linear-gradient(135deg, #F08540, #E8772D)
+}
+.access-buy-sublabel{
+  text-align:center;font-size:10px;color:rgba(244,239,230,.5);
+  margin-top:6px;margin-bottom:14px;font-style:italic;
+  font-family:'Inter Tight', sans-serif
 }
 .access-buy-web{
-  background:transparent;color:var(--teal);
-  border:1px solid rgba(0,184,196,.4)
+  background:rgba(0,184,196,.08);color:var(--teal);
+  border:1px solid rgba(0,184,196,.5);
+  font-weight:500
 }
 .access-buy-web:hover{
-  background:rgba(0,184,196,.08);
-  border-color:var(--teal)
+  background:rgba(0,184,196,.15);
+  border-color:var(--teal);
+  transform:translateY(-1px)
 }
 
 .access-attempts{
@@ -820,8 +904,15 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
   margin-top:10px;text-transform:uppercase
 }
 
-@media(max-width:560px){
-  .access-modal{padding:28px 24px}
+@media(max-width:760px){
+  .access-modal{
+    grid-template-columns:1fr;
+    max-width:520px
+  }
+  .access-visual{min-height:280px}
+  .access-visual-content{padding:24px 22px}
+  .access-visual-hook{font-size:26px}
+  .access-form{padding:24px 22px}
   .access-title{font-size:21px}
   .access-actions{flex-direction:column}
 }
@@ -833,49 +924,76 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 <!-- ACCESS MODAL · Book-gated entry -->
 <div class="access-overlay" id="accessOverlay">
   <div class="access-modal">
-    <div class="access-brand">
-      <div class="access-brand-mark"></div>
-      <div class="access-brand-text">
-        <div class="access-brand-t1">Neuro-VADO</div>
-        <div class="access-brand-t2">Acceso a la app</div>
+
+    <div class="access-visual">
+      <img src="assets/Imagen_InBrain.webp" alt="Análisis biométrico facial" class="access-visual-img" onerror="this.style.display='none'">
+      <div class="access-visual-overlay"></div>
+      <div class="access-visual-content">
+        <div>
+          <div class="access-visual-badge">◆ Behavioral Intelligence</div>
+          <div class="access-visual-hook">El cerebro <em>decide</em><br>antes que <em>la razón</em></div>
+          <div class="access-visual-sub">Esta app aplica neurociencia del consumidor a estímulos publicitarios reales — el método del libro, automatizado.</div>
+        </div>
+        <div class="access-book-card">
+          <img src="assets/Portada_Libro_Neuro.jpg" alt="Portada del libro" class="access-book-thumb" onerror="this.style.display='none'">
+          <div class="access-book-info">
+            <div class="access-book-label">Basado en el libro</div>
+            <div class="access-book-title">Neuromarketing: descifrando la mente del consumidor para construir estrategias exitosas</div>
+            <div class="access-book-author">Javier Fernando Rubiano Espinosa</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <h2 class="access-title">Acceso para <em>lectores del libro</em></h2>
-    <p class="access-desc">Esta app es una herramienta complementaria del libro <em>Neuromarketing: descifrando la mente del consumidor</em> de Javier Fernando Rubiano. Para acceder, demuestra que tienes el libro.</p>
+    <div class="access-form">
+      <div class="access-brand">
+        <div class="access-brand-mark"></div>
+        <div class="access-brand-text">
+          <div class="access-brand-t1">Neuro-VADO</div>
+          <div class="access-brand-t2">Acceso a la app</div>
+        </div>
+      </div>
 
-    <div class="access-question">
-      <div class="access-q-label">◆ Pregunta de validación</div>
-      <div class="access-q-text" id="accessQText">Escribe la primera palabra (puede ser de pocas letras) de la página <strong id="accessPage">—</strong>. No importan tildes ni mayúsculas.</div>
+      <h2 class="access-title">Acceso para <em>lectores del libro</em></h2>
+      <p class="access-desc">Para acceder, demuestra que tienes el libro respondiendo una pregunta corta.</p>
+
+      <div class="access-question">
+        <div class="access-q-label">◆ Pregunta de validación</div>
+        <div class="access-q-text" id="accessQText">Escribe la primera palabra de la página <strong id="accessPage">—</strong></div>
+        <div class="access-q-hint">Puede ser de pocas letras · sin tildes · mayúscula o minúscula</div>
+      </div>
+
+      <input type="text" class="access-input" id="accessInput" placeholder="Tu respuesta..." autocomplete="off" spellcheck="false">
+
+      <div class="access-attempts" id="accessAttempts">
+        <div class="access-attempt-dot"></div>
+        <div class="access-attempt-dot"></div>
+        <div class="access-attempt-dot"></div>
+      </div>
+
+      <div class="access-feedback" id="accessFeedback"></div>
+
+      <div class="access-actions">
+        <button class="access-btn access-btn-primary" id="accessSubmit">Validar →</button>
+      </div>
+
+      <div class="access-divider">¿AÚN NO TIENES EL LIBRO?</div>
+
+      <div class="access-buy-quote">30 años de experiencia en estrategia de marca,<br>condensados en un libro práctico</div>
+
+      <div class="access-buy-btns">
+        <a href="https://www.amazon.com/-/es/Javier-Rubiano-ebook/dp/B0GZYMJ94K/" target="_blank" rel="noopener" class="access-buy-btn access-buy-amazon">
+          ◉ Click aquí · Cómpralo en Amazon
+        </a>
+        <div class="access-buy-sublabel">Versión Kindle · Lectura instantánea</div>
+        <a href="https://javierrubiano.com" target="_blank" rel="noopener" class="access-buy-btn access-buy-web">
+          ◆ Adquiérelo también en javierrubiano.com
+        </a>
+      </div>
+
+      <div class="access-footer-text">Neuro-VADO · Javier Fernando Rubiano</div>
     </div>
 
-    <input type="text" class="access-input" id="accessInput" placeholder="Escribe tu respuesta aquí..." autocomplete="off" spellcheck="false">
-
-    <div class="access-attempts" id="accessAttempts">
-      <div class="access-attempt-dot"></div>
-      <div class="access-attempt-dot"></div>
-      <div class="access-attempt-dot"></div>
-    </div>
-
-    <div class="access-feedback" id="accessFeedback"></div>
-
-    <div class="access-actions">
-      <button class="access-btn access-btn-primary" id="accessSubmit">Validar →</button>
-    </div>
-
-    <div class="access-divider">¿NO TIENES EL LIBRO?</div>
-
-    <div class="access-buy-label">Adquiérelo aquí</div>
-    <div class="access-buy-btns">
-      <a href="https://www.amazon.com/-/es/Javier-Rubiano-ebook/dp/B0GZYMJ94K/" target="_blank" rel="noopener" class="access-buy-btn access-buy-amazon">
-        ◆ Comprar en Amazon · Kindle
-      </a>
-      <a href="https://javierrubiano.com" target="_blank" rel="noopener" class="access-buy-btn access-buy-web">
-        ◉ Visitar javierrubiano.com
-      </a>
-    </div>
-
-    <div class="access-footer-text">Neuro-VADO · Javier Fernando Rubiano</div>
   </div>
 </div>
 
@@ -1359,10 +1477,12 @@ function handleAccessSubmit(){
   if(validateAnswer(answer, currentPageNumber)){
     grantAccess();
     clearFeedback();
-    showFeedback('✓ Acceso concedido. Bienvenido.', 'error');
-    document.getElementById('accessFeedback').style.background = 'rgba(94,227,184,.12)';
-    document.getElementById('accessFeedback').style.borderLeftColor = 'var(--mint)';
-    document.getElementById('accessFeedback').style.color = 'var(--mint)';
+    const fb = document.getElementById('accessFeedback');
+    fb.textContent = '✓ Acceso concedido. Bienvenido.';
+    fb.className = 'access-feedback show';
+    fb.style.background = 'rgba(94,227,184,.12)';
+    fb.style.borderLeft = '3px solid var(--mint)';
+    fb.style.color = 'var(--mint)';
     setTimeout(hideAccessModal, 700);
     return;
   }
@@ -1378,8 +1498,17 @@ function handleAccessSubmit(){
     setLockout();
     showLockoutState(LOCKOUT_MINUTES * 60 * 1000);
   } else {
+    // Rotate to a different page to prevent brute-force on a single word
+    const previousPage = currentPageNumber;
+    let attempts = 0;
+    while(currentPageNumber === previousPage && attempts < 20){
+      currentPageNumber = pickRandomPage();
+      attempts++;
+    }
+    document.getElementById('accessPage').textContent = currentPageNumber;
+
     const remaining = MAX_ATTEMPTS - newAttempts;
-    showFeedback(`Respuesta incorrecta. Te quedan ${remaining} intento${remaining === 1 ? '' : 's'}.`, 'error');
+    showFeedback(`Respuesta incorrecta. Te quedan ${remaining} intento${remaining === 1 ? '' : 's'}. Ahora te pedimos la página ${currentPageNumber}.`, 'error');
     input.value = '';
     input.focus();
   }
