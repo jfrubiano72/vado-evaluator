@@ -1,31 +1,33 @@
 /**
- * VADO Evaluator · Cloudflare Worker Proxy
+ * Neuro-VADO · Cloudflare Worker Proxy
  * ----------------------------------------
- * Proxies requests from the GitHub Pages app to the Anthropic API,
+ * Proxies requests from the GitHub Pages app to the Google Gemini API,
  * keeping the API key safe on the server side.
  *
- * Deployment:
- *   1. npm install -g wrangler
- *   2. wrangler login
- *   3. wrangler secret put ANTHROPIC_API_KEY   (paste your key when prompted)
- *   4. wrangler deploy
+ * IMPORTANT: The frontend (index.html) was originally built to send
+ * Anthropic-format payloads. This worker accepts those payloads and
+ * translates them to Gemini format on the way out, then translates
+ * Gemini's response back into Anthropic-shaped JSON on the way in.
+ * That way the frontend keeps working unchanged.
  *
- * Author: Javier Rubiano · Behavioral Intelligence Lab
+ * Deployment:
+ *   1. wrangler secret put GEMINI_API_KEY   (paste your Google AI Studio key)
+ *   2. wrangler deploy
+ *
+ * Author: Javier Fernando Rubiano Espinosa
  */
 
 // === CORS ALLOWED ORIGINS ===
-// Only these origins can call this worker. Add more if you deploy elsewhere.
 const ALLOWED_ORIGINS = [
   'https://jfrubiano72.github.io',
-  'http://localhost:8000',   // for local testing
+  'http://localhost:8000',
   'http://localhost:3000',
-  'http://127.0.0.1:5500'    // VS Code Live Server
+  'http://127.0.0.1:5500'
 ];
 
-// === RATE LIMIT ===
-// Simple per-IP limit to prevent abuse. Stored in memory (resets per worker instance).
-const RATE_LIMIT_MAX = 20;      // requests
-const RATE_LIMIT_WINDOW = 3600; // seconds (1 hour)
+// === RATE LIMIT (per worker instance) ===
+const RATE_LIMIT_MAX = 30;       // requests per hour per IP
+const RATE_LIMIT_WINDOW = 3600;  // seconds
 const ipHits = new Map();
 
 function checkRateLimit(ip) {
@@ -55,6 +57,94 @@ function corsHeaders(origin) {
   };
 }
 
+// === Convert Anthropic-format payload to Gemini-format ===
+function anthropicToGemini(body) {
+  const system = body.system || '';
+  const messages = body.messages || [];
+  const maxTokens = body.max_tokens || 3500;
+
+  // Build Gemini contents array
+  const contents = [];
+  for (const msg of messages) {
+    const role = msg.role === 'assistant' ? 'model' : 'user';
+    const parts = [];
+
+    if (typeof msg.content === 'string') {
+      parts.push({ text: msg.content });
+    } else if (Array.isArray(msg.content)) {
+      for (const block of msg.content) {
+        if (block.type === 'text') {
+          parts.push({ text: block.text });
+        } else if (block.type === 'image' && block.source) {
+          // Anthropic image: { source: { type: 'base64', media_type: 'image/jpeg', data: '...' } }
+          // Gemini image: { inline_data: { mime_type: 'image/jpeg', data: '...' } }
+          const src = block.source;
+          if (src.type === 'base64') {
+            parts.push({
+              inline_data: {
+                mime_type: src.media_type || 'image/jpeg',
+                data: src.data
+              }
+            });
+          } else if (src.type === 'url') {
+            // Gemini also supports URL via fileData, but base64 is what the frontend sends
+            parts.push({ text: `[Image URL: ${src.url}]` });
+          }
+        }
+      }
+    }
+
+    if (parts.length > 0) {
+      contents.push({ role, parts });
+    }
+  }
+
+  const geminiPayload = {
+    contents,
+    generationConfig: {
+      maxOutputTokens: maxTokens,
+      temperature: 0.7,
+      topP: 0.95
+    }
+  };
+
+  if (system) {
+    geminiPayload.systemInstruction = { parts: [{ text: system }] };
+  }
+
+  return geminiPayload;
+}
+
+// === Convert Gemini response back to Anthropic-shape so frontend doesn't change ===
+function geminiToAnthropic(geminiResponse) {
+  const candidate = (geminiResponse.candidates && geminiResponse.candidates[0]) || {};
+  const content = candidate.content || {};
+  const parts = content.parts || [];
+
+  // Concatenate all text parts
+  const textBlocks = parts
+    .filter(p => typeof p.text === 'string')
+    .map(p => ({ type: 'text', text: p.text }));
+
+  // Map finish reason
+  let stopReason = 'end_turn';
+  if (candidate.finishReason === 'MAX_TOKENS') stopReason = 'max_tokens';
+  if (candidate.finishReason === 'SAFETY') stopReason = 'stop_sequence';
+
+  return {
+    id: 'msg_' + Math.random().toString(36).slice(2, 14),
+    type: 'message',
+    role: 'assistant',
+    model: 'gemini-2.0-flash',
+    content: textBlocks.length > 0 ? textBlocks : [{ type: 'text', text: '' }],
+    stop_reason: stopReason,
+    usage: {
+      input_tokens: (geminiResponse.usageMetadata && geminiResponse.usageMetadata.promptTokenCount) || 0,
+      output_tokens: (geminiResponse.usageMetadata && geminiResponse.usageMetadata.candidatesTokenCount) || 0
+    }
+  };
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
@@ -68,9 +158,10 @@ export default {
     // Health check
     if (request.method === 'GET') {
       return new Response(JSON.stringify({
-        service: 'VADO Evaluator Proxy',
+        service: 'Neuro-VADO Proxy',
+        engine: 'Google Gemini 2.0 Flash',
         status: 'running',
-        author: 'Javier Rubiano · Behavioral Intelligence Lab'
+        author: 'Javier Fernando Rubiano Espinosa'
       }), {
         status: 200,
         headers: { ...cors, 'Content-Type': 'application/json' }
@@ -84,35 +175,35 @@ export default {
       });
     }
 
-    // Rate limit per IP
-    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-    const rl = checkRateLimit(ip);
-    if (!rl.allowed) {
-      return new Response(JSON.stringify({
-        error: 'Rate limit exceeded',
-        message: 'Has excedido el límite de evaluaciones por hora. Intenta de nuevo más tarde.',
-        resetAt: rl.resetAt
-      }), {
-        status: 429,
-        headers: { ...cors, 'Content-Type': 'application/json', 'Retry-After': String(rl.resetAt - Math.floor(Date.now()/1000)) }
-      });
-    }
-
     // API key check
-    if (!env.ANTHROPIC_API_KEY) {
+    if (!env.GEMINI_API_KEY) {
       return new Response(JSON.stringify({
         error: 'Server configuration error',
-        message: 'ANTHROPIC_API_KEY not configured on worker.'
+        message: 'GEMINI_API_KEY not configured on worker.'
       }), {
         status: 500,
         headers: { ...cors, 'Content-Type': 'application/json' }
       });
     }
 
-    // Parse body
-    let body;
+    // Rate limit
+    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const rl = checkRateLimit(ip);
+    if (!rl.allowed) {
+      return new Response(JSON.stringify({
+        error: 'Rate limit exceeded',
+        message: `Too many requests. Try again later.`,
+        resetAt: rl.resetAt
+      }), {
+        status: 429,
+        headers: { ...cors, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Parse body (frontend sends Anthropic-shaped payload)
+    let anthropicBody;
     try {
-      body = await request.json();
+      anthropicBody = await request.json();
     } catch (e) {
       return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
         status: 400,
@@ -120,34 +211,64 @@ export default {
       });
     }
 
-    // Forward to Anthropic
+    // Translate to Gemini format
+    const geminiPayload = anthropicToGemini(anthropicBody);
+
+    // Forward to Gemini
     try {
-      const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      const apiKey = (env.GEMINI_API_KEY || '').trim();
+      const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+      const geminiResponse = await fetch(geminiURL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': (env.ANTHROPIC_API_KEY || '').trim(),
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify(body)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(geminiPayload)
       });
 
-      const responseText = await anthropicResponse.text();
-      return new Response(responseText, {
-        status: anthropicResponse.status,
-        headers: {
-          ...cors,
-          'Content-Type': 'application/json',
-          'X-RateLimit-Remaining': String(rl.remaining),
-          'X-RateLimit-Reset': String(rl.resetAt)
-        }
+      const responseText = await geminiResponse.text();
+
+      if (!geminiResponse.ok) {
+        console.log('=== GEMINI ERROR ===');
+        console.log('Status:', geminiResponse.status);
+        console.log('Response:', responseText);
+        console.log('====================');
+        return new Response(JSON.stringify({
+          error: 'Upstream error',
+          status: geminiResponse.status,
+          message: responseText.slice(0, 500)
+        }), {
+          status: geminiResponse.status,
+          headers: { ...cors, 'Content-Type': 'application/json' }
+        });
+      }
+
+      let geminiJSON;
+      try {
+        geminiJSON = JSON.parse(responseText);
+      } catch (e) {
+        return new Response(JSON.stringify({
+          error: 'Invalid response from Gemini',
+          message: responseText.slice(0, 300)
+        }), {
+          status: 502,
+          headers: { ...cors, 'Content-Type': 'application/json' }
+        });
+      }
+
+      // Translate back to Anthropic shape so the frontend works unchanged
+      const anthropicShape = geminiToAnthropic(geminiJSON);
+
+      return new Response(JSON.stringify(anthropicShape), {
+        status: 200,
+        headers: { ...cors, 'Content-Type': 'application/json' }
       });
+
     } catch (err) {
       return new Response(JSON.stringify({
-        error: 'Upstream error',
-        message: String(err && err.message || err)
+        error: 'Worker error',
+        message: err.message || String(err)
       }), {
-        status: 502,
+        status: 500,
         headers: { ...cors, 'Content-Type': 'application/json' }
       });
     }
