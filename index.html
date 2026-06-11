@@ -1766,7 +1766,7 @@ async function evaluateStimulus(input, audience){
 
   const body = {
     model: 'claude-sonnet-4-5',
-    max_tokens: input.kind === 'url' ? 5000 : 3500,
+    max_tokens: input.kind === 'url' ? 8000 : 6000,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userContent }]
   };
