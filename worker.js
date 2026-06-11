@@ -138,7 +138,7 @@ function geminiToAnthropic(geminiResponse) {
     id: 'msg_' + Math.random().toString(36).slice(2, 14),
     type: 'message',
     role: 'assistant',
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
     content: textBlocks.length > 0 ? textBlocks : [{ type: 'text', text: '' }],
     stop_reason: stopReason,
     usage: {
@@ -220,7 +220,7 @@ export default {
     // Forward to Gemini
     try {
       const apiKey = (env.GEMINI_API_KEY || '').trim();
-      const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+      const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
       const geminiResponse = await fetch(geminiURL, {
         method: 'POST',
