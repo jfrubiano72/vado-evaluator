@@ -20,6 +20,9 @@
 // === CORS ALLOWED ORIGINS ===
 const ALLOWED_ORIGINS = [
   'https://jfrubiano72.github.io',
+  'https://neurovado.javierrubiano.com',
+  'https://javierrubiano.com',
+  'https://www.javierrubiano.com',
   'http://localhost:8000',
   'http://localhost:3000',
   'http://127.0.0.1:5500'
