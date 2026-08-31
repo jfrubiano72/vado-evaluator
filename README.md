@@ -41,16 +41,16 @@ Metodología desarrollada por Javier Rubiano como parte del Behavioral Intellige
         │
         ▼  fetch POST
  Cloudflare Worker proxy
- (ANTHROPIC_API_KEY como secret)
+ (GEMINI_API_KEY como secret)
         │
         ▼
- api.anthropic.com/v1/messages
+ generativelanguage.googleapis.com
         │
         ▼
- Claude Sonnet 4 (multimodal)
+ Gemini 2.5 Flash Lite (multimodal)
 ```
 
-La API key de Anthropic **nunca** viaja al navegador del estudiante. El Worker aplica rate-limiting por IP (20 evaluaciones/hora) para proteger la cuenta.
+La API key **nunca** viaja al navegador del estudiante. El Worker aplica rate-limiting por IP (20 evaluaciones/hora) para proteger la cuenta.
 
 ---
 
@@ -66,7 +66,7 @@ npm install -g wrangler
 wrangler login
 
 # Guardar la API key como secret
-wrangler secret put ANTHROPIC_API_KEY
+wrangler secret put GEMINI_API_KEY
 # (pega tu key cuando pregunte)
 
 # Deploy
@@ -128,7 +128,7 @@ Opcionalmente pueden agregar la audiencia objetivo para análisis más preciso.
 - **Autor:** Javier Fernando Rubiano Espinosa — [javierrubiano.com](https://javierrubiano.com)
 - **Cátedra:** Neuromarketing · Posgrado · Universidad de La Salle
 - **Lab:** Behavioral Intelligence Lab · VISORIA Intelligence
-- **Tecnología:** Claude Sonnet 4 (Anthropic), Cloudflare Workers, GitHub Pages
+- **Tecnología:** Gemini 2.5 Flash Lite (Google), Cloudflare Workers, GitHub Pages
 
 ---
 

@@ -1021,7 +1021,7 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
   <section class="hero">
     <div class="kicker">Analizador de estímulos publicitarios</div>
     <h1>Evalúa una idea, aviso o página<br>con la <em>metodología VADO</em>.</h1>
-    <p class="lede">Ingresa un brief, sube una imagen publicitaria, o pega la URL de una landing page. La app analiza el estímulo bajo los cuatro ejes del método VADO — Ver, Activar, Decidir, Operar — y entrega puntaje por eje, activación neural esperada y recomendaciones específicas de ajuste.</p>
+    <p class="lede">Ingresa un brief, sube una imagen publicitaria, o pega la URL de una landing page. La app analiza el estímulo bajo los cuatro ejes del método VADO — Ver, Activar, Decidir, Operar — y entrega puntaje por eje, el perfil de dimensiones VADO y recomendaciones específicas de ajuste.</p>
   </section>
 
   <!-- VADO LEGEND -->
@@ -1029,12 +1029,12 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
     <div class="legend-cell" data-letter="V">
       <div class="lbl">Eje 01</div>
       <div class="nm">Ver</div>
-      <div class="ds">Saliencia visual, jerarquía, contraste — capturar el lóbulo occipital en el primer segundo.</div>
+      <div class="ds">Saliencia visual, jerarquía, contraste — ganar la mirada en el primer segundo.</div>
     </div>
     <div class="legend-cell" data-letter="A">
       <div class="lbl">Eje 02</div>
       <div class="nm">Activar</div>
-      <div class="ds">Emoción, storytelling, personajes — disparar el sistema límbico y el hemisferio derecho.</div>
+      <div class="ds">Emoción, storytelling, personajes — mover algo antes de que el lector razone.</div>
     </div>
     <div class="legend-cell" data-letter="D">
       <div class="lbl">Eje 03</div>
@@ -1203,16 +1203,16 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
 
     <!-- BRAIN 3D SIMULATION -->
     <section class="detail-section">
-      <h3 class="section-title">Simulación <em>3D</em> del cerebro</h3>
-      <div class="section-sub">Visualización anatómica de la activación · arrastra para rotar</div>
+      <h3 class="section-title">Mapa de <em>dimensiones</em> VADO</h3>
+      <div class="section-sub">Simulaci&oacute;n de c&oacute;mo podr&iacute;a responder un lector, seg&uacute;n las cuatro dimensiones · arrastra para rotar</div>
       <div class="brain-3d-section">
         <div class="brain-canvas-wrap">
           <canvas id="brainResultCanvas"></canvas>
-          <div class="brain-overlay-hint">◉ Modelo anatómico interactivo</div>
-          <div class="brain-overlay-pulse"><div class="brain-pulse-dot"></div> Activación en tiempo real</div>
+          <div class="brain-overlay-hint">◉ Representaci&oacute;n conceptual, no una medici&oacute;n</div>
+          <div class="brain-overlay-pulse"><div class="brain-pulse-dot"></div> Perfil estimado de la pieza</div>
         </div>
         <div class="brain-legend">
-          <h4>Lóbulos · Estado</h4>
+          <h4>Dimensiones &middot; Estado</h4>
           <div id="brainLegend"></div>
           <div class="lobe-detail" id="lobeDetail">
             <div class="ld-head">
@@ -1221,11 +1221,22 @@ input.audience::placeholder{color:rgba(244,239,230,.3);font-style:italic}
               <div class="ld-status" id="ldStatus">—</div>
             </div>
             <div class="ld-note" id="ldNote">—</div>
-            <div class="ld-elements-label">Elementos del estímulo que lo activan</div>
+            <div class="ld-elements-label">Elementos del est&iacute;mulo que la sostienen</div>
             <ul class="ld-elements" id="ldElements"></ul>
           </div>
         </div>
       </div>
+      <!-- EL AVISO VA DENTRO DE LA PIEZA, no al pie ni en un enlace.
+           La figura es lo primero que se mira y lo que se recuerda; una
+           advertencia que hay que ir a buscar no advierte de nada. -->
+      <p class="vado-nota" style="margin-top:18px;font-size:13px;line-height:1.5;opacity:.72">
+        <b>Qu&eacute; es y qu&eacute; no es.</b> Esta figura es una <b>simulaci&oacute;n de c&oacute;mo
+        podr&iacute;a responder un lector</b> ante la pieza, construida con la r&uacute;brica VADO y
+        asistida por inteligencia artificial. <b>No mide actividad cerebral</b> ni sustituye un
+        estudio con participantes: no hay nadie observando el est&iacute;mulo mientras se genera.
+        Sirve para formular hip&oacute;tesis de dise&ntilde;o, que despu&eacute;s pueden comprobarse
+        con investigaci&oacute;n conductual.
+      </p>
     </section>
 
     <!-- EKMAN EMOTIONS -->
